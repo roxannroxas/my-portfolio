@@ -1,0 +1,35 @@
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom right, #1a1a1a, #0f0f0f); 
+  background-attachment: fixed;
+  color: #fff;
+}
+
+
+.app-container {
+  height: 100%;
+  overflow-y: auto; 
+  scroll-snap-type: y mandatory;
+}
+
+
+.app-container::-webkit-scrollbar {
+  display: none; 
+}
+.app-container {
+  -ms-overflow-style: none; 
+  scrollbar-width: none;    
+}
+
+
+@media (max-width: 768px) {
+  .info-container {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+  }
+}

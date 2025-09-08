@@ -1,0 +1,37 @@
+
+section {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.section-container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 0 auto;
+  text-align: center;
+  color: #fff;
+}
+
+.section-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #a970ff; 
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+
+.section-text {
+  font-size: 1.3rem;
+  line-height: 1.8;
+  color: #e0e0e0;
+  max-width: 800px;
+  margin: 0 auto;
+}

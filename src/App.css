@@ -1,0 +1,41 @@
+:root {
+  --primary: #a970ff;
+  --secondary: #ff6ec7;
+  --bg: #111;
+  --text: #fff;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom right, #1a1a1a, #0f0f0f);
+  background-attachment: fixed;
+}
+
+
+.app-container {
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.app-container::-webkit-scrollbar {
+  display: none;
+}
+
+section {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  scroll-snap-align: start;
+  padding: 60px 40px;
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--text);
+}
