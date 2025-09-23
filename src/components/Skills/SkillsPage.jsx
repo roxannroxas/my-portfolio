@@ -12,6 +12,19 @@ import {
   FaGitAlt,
 } from "react-icons/fa";
 
+
+const SkillCard = ({ icon, category, skills }) => (
+  <div className="skill-card">
+    <div className="skill-icon">{icon}</div>
+    <h3>{category}</h3>
+    <ul>
+      {skills.map((skill, index) => (
+        <li key={index}>{skill}</li>
+      ))}
+    </ul>
+  </div>
+);
+
 const SkillsPage = () => {
   const skillData = [
     { icon: <FaPhp />, category: "Programming", skills: ["JavaScript", "PHP", "Python", "Java"] },
@@ -27,15 +40,7 @@ const SkillsPage = () => {
       <h2 className="section-title">My Skills</h2>
       <div className="skills-container">
         {skillData.map((item, index) => (
-          <div key={index} className="skill-card">
-            <div className="skill-icon">{item.icon}</div>
-            <h3>{item.category}</h3>
-            <ul>
-              {item.skills.map((skill, i) => (
-                <li key={i}>{skill}</li>
-              ))}
-            </ul>
-          </div>
+          <SkillCard key={index} {...item} />
         ))}
       </div>
     </section>

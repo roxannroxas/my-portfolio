@@ -4,16 +4,41 @@ import "./AboutMe.css";
 import profilePic from "../../assets/me.png";
 
 const AboutMe = () => {
+  const educationData = [
+    {
+      school: "La Consolacion University Philippines",
+      detail: "Bachelor of Science in Information Technology (4th Year)",
+      awards: ["Dean's Lister – 1st, 2nd, 3rd Year"],
+    },
+    {
+      school: "Senior High School",
+      detail: "With Honors (Grade 11–12)",
+    },
+    {
+      school: "Junior High School",
+      detail: "With Honors (Grade 7–10)",
+    },
+    {
+      school: "Elementary",
+      detail: "With Honors (Grade 3–6)",
+    },
+  ];
+
+  const achievementsData = [
+    "Microsoft Excel 2019 Associate Certification",
+    "Dean's Lister Awards",
+  ];
+
   return (
     <>
       <Navbar />
       <section className="aboutme-hero">
-        {/* Image on Left */}
+       
         <div className="aboutme-left">
           <img src={profilePic} alt="Roxanne Roxas" />
         </div>
 
-        {/* Text on Right */}
+      
         <div className="aboutme-right">
           <h2>Hello, I’m</h2>
           <h1>Roxanne Roxas</h1>
@@ -21,49 +46,63 @@ const AboutMe = () => {
             BSIT 4th Year Student | Web Developer | IT Enthusiast
           </p>
 
-          {/* Personal Info */}
+          
           <ul className="personal-info">
-            <li><strong>Email:</strong> roxanne.roxas@email.lcup.edu.ph</li>
-            <li><strong>Phone:</strong> +63 960 390 4241</li>
-            <li><strong>Address:</strong> Bulacan, City of Malolos, Philippines</li>
+            <li>
+              <strong>Email:</strong> roxanne.roxas@email.lcup.edu.ph
+            </li>
+            <li>
+              <strong>Phone:</strong> +63 960 390 4241
+            </li>
+            <li>
+              <strong>Address:</strong> Bulacan, City of Malolos, Philippines
+            </li>
           </ul>
 
-          {/* Education & Achievements Two-Column Layout */}
+    
           <div className="info-sections two-columns">
-            {/* Education */}
+            
             <div className="info-section">
-              <h2><i className="section-icon fas fa-graduation-cap"></i>Education</h2>
+              <h2>
+                <i className="section-icon fas fa-graduation-cap"></i>Education
+              </h2>
               <div className="cards-grid">
-                <div className="card">
-                  <p><strong>La Consolacion University Philippines</strong></p>
-                  <p>Bachelor of Science in Information Technology (4th Year)</p>
-                  <ul>
-                    <li><i className="list-icon fas fa-award"></i>Dean's Lister – 1st, 2nd, 3rd Year</li>
-                  </ul>
-                </div>
-                <div className="card">
-                  <p><strong>Senior High School</strong></p>
-                  <p>With Honors (Grade 11–12)</p>
-                </div>
-                <div className="card">
-                  <p><strong>Junior High School</strong></p>
-                  <p>With Honors (Grade 7–10)</p>
-                </div>
-                <div className="card">
-                  <p><strong>Elementary</strong></p>
-                  <p>With Honors (Grade 3–6)</p>
-                </div>
+                {educationData.map((edu, index) => (
+                  <div key={index} className="card">
+                    <p>
+                      <strong>{edu.school}</strong>
+                    </p>
+                    <p>{edu.detail}</p>
+                    {edu.awards && (
+                      <ul>
+                        {edu.awards.map((award, i) => (
+                          <li key={i}>
+                            <i className="list-icon fas fa-award"></i>
+                            {award}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Achievements */}
+           
             <div className="info-section">
-              <h2><i className="section-icon fas fa-trophy"></i>Achievements & Certifications</h2>
+              <h2>
+                <i className="section-icon fas fa-trophy"></i>Achievements &
+                Certifications
+              </h2>
               <div className="cards-grid">
                 <div className="card">
                   <ul>
-                    <li><i className="list-icon fas fa-file-excel"></i>Microsoft Excel 2019 Associate Certification</li>
-                    <li><i className="list-icon fas fa-award"></i>Dean's Lister Awards</li>
+                    {achievementsData.map((achievement, index) => (
+                      <li key={index}>
+                        <i className="list-icon fas fa-check-circle"></i>
+                        {achievement}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>

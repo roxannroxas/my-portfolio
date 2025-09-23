@@ -2,7 +2,6 @@ import React from "react";
 import "./Projects.css";
 import { useNavigate } from "react-router-dom";
 
-
 import studentPortal from "../../assets/studentportal.jpg";
 import daBreeder from "../../assets/dabreeder.png";
 import taraG from "../../assets/tarag.png";
@@ -11,16 +10,15 @@ import purrCafe from "../../assets/purrcafe.png";
 import godot from "../../assets/godot.png";
 import portfolio from "../../assets/portfolio.png";
 import faceRecog from "../../assets/facerecog.png";
-import wordpress from "../../assets/wordpress.png"; 
+import wordpress from "../../assets/wordpress.png";
 
-
+// Data
 const projects = [
   {
     title: "Student Profile System",
     tech: "PHP, MySQL",
     img: studentPortal,
-    description:
-      "A web-based system for managing student profiles with secure authentication.",
+    description: "A web-based system for managing student profiles with secure authentication.",
   },
   {
     title: "DaBreeder",
@@ -68,10 +66,19 @@ const projects = [
     title: "WordPress TechCare Assistance Website",
     tech: "WordPress",
     img: wordpress,
-    description:
-      "Website providing technical support and assistance using WordPress.",
+    description: "Website providing technical support and assistance using WordPress.",
   },
 ];
+
+
+const ProjectCard = ({ img, title, tech, description }) => (
+  <div className="project-card">
+    <img src={img} alt={title} className="project-img" />
+    <h3>{title}</h3>
+    <p className="project-tech">{tech}</p>
+    <p className="project-desc">{description}</p>
+  </div>
+);
 
 const Projects = () => {
   const navigate = useNavigate();
@@ -81,12 +88,7 @@ const Projects = () => {
       <h2 className="projects-title">My Projects</h2>
       <div className="projects-container">
         {projects.map((project, index) => (
-          <div key={index} className="project-card">
-            <img src={project.img} alt={project.title} className="project-img" />
-            <h3>{project.title}</h3>
-            <p className="project-tech">{project.tech}</p>
-            <p className="project-desc">{project.description}</p>
-          </div>
+          <ProjectCard key={index} {...project} />
         ))}
       </div>
     </section>
