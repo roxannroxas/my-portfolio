@@ -12,7 +12,7 @@ import {
   FaGitAlt,
 } from "react-icons/fa";
 
-// Reusable Skill Card Component
+
 const SkillCard = ({ icon, category, skills }) => (
   <div className="skill-card">
     <div className="skill-icon">{icon}</div>
