@@ -9,6 +9,9 @@ import SkillsPage from "./components/Skills/SkillsPage";
 import Skills from "./components/Skills/Skills"; 
 import Contact from "./components/Contact/Contact"; 
 import ContactPage from "./components/Contact/ContactPage";
+import API from "./components/API/API"; 
+import CatSurprise from "./components/CatSurprise/CatSurprise";
+import RickMortyAPI from "./components/API/RickMortyAPI";
 
 import "./App.css";
 
@@ -74,6 +77,13 @@ function App() {
           }
         />
       </Routes>
+
+      {/* ✅ Add the API sidebar globally here */}
+      <API />
+      <CatSurprise />
+    
+       
+        <RickMortyAPI />
     </div>
   );
 }
