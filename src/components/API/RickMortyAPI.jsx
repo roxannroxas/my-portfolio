@@ -24,7 +24,7 @@ const RickMortyAPI = () => {
 
   return (
     <>
-      {/* 🧪 Floating toggle button */}
+      
       <button
         className={`api-toggle-btn rickmorty-toggle ${isOpen ? "active" : ""}`}
         onClick={() => setIsOpen(!isOpen)}
@@ -32,7 +32,7 @@ const RickMortyAPI = () => {
         {isOpen ? "×" : "🧪"}
       </button>
 
-      {/* Floating sidebar */}
+   
       <div className={`api-sidebar rickmorty-sidebar ${isOpen ? "open" : ""}`}>
         <h2><Atom className="icon" /> Rick & Morty</h2>
 

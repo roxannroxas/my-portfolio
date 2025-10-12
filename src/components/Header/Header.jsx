@@ -1,9 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaGithub, FaLinkedin, FaFacebook, FaEnvelope } from "react-icons/fa";
-import { ReactTyped } from "react-typed"; // 🆕 Added
+import { ReactTyped } from "react-typed"; 
 import "./Header.css";
 import profilePic from "../../assets/me.png";
+import resumePDF from "../../assets/resume.pdf"; // ✅ Import your resume file
 
 const Header = () => {
   const navigate = useNavigate();
@@ -12,8 +13,13 @@ const Header = () => {
     navigate("/about-me");
   };
 
+  // ✅ Function to open resume in a new tab
+  const handleResumeClick = () => {
+    window.open(resumePDF, "_blank");
+  };
+
   return (
-        <section className="hero">
+    <section className="hero">
       <div className="hero-overlay"></div>
       <div className="hero-container">
         <div className="hero-left">
@@ -23,7 +29,7 @@ const Header = () => {
           <h1 className="name">
             <ReactTyped
               strings={[
-              "Hi, I’m <span class='highlight'>Roxanne Roxas</span>",
+                "Hi, I’m <span class='highlight'>Roxanne Roxas</span>",
               ]}
               typeSpeed={70}
               backSpeed={40}
@@ -31,7 +37,7 @@ const Header = () => {
               showCursor={true}
               cursorChar="|"
               loop={true}
-               contentType="html" 
+              contentType="html"
             />
           </h1>
 
@@ -42,7 +48,11 @@ const Header = () => {
             <button className="cta-btn" onClick={handleClick}>
               View About Me
             </button>
-            <button className="cta-btn secondary">Hire Me</button>
+
+           
+            <button className="cta-btn secondary" onClick={handleResumeClick}>
+              My Resume
+            </button>
           </div>
 
           <div className="social-icons">
