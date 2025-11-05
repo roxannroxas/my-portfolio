@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../NavBar/NavBar";
 import "./AboutMe.css";
 import profilePic from "../../assets/me.png";
+import { FaGraduationCap, FaAward, FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaCheckCircle, FaTrophy } from "react-icons/fa";
 
 const AboutMe = () => {
   const educationData = [
@@ -33,12 +34,10 @@ const AboutMe = () => {
     <>
       <Navbar />
       <section className="aboutme-hero">
-       
         <div className="aboutme-left">
           <img src={profilePic} alt="Roxanne Roxas" />
         </div>
 
-      
         <div className="aboutme-right">
           <h2>Hello, I’m</h2>
           <h1>Roxanne Roxas</h1>
@@ -46,25 +45,22 @@ const AboutMe = () => {
             BSIT 4th Year Student | Web Developer | IT Enthusiast
           </p>
 
-          
           <ul className="personal-info">
             <li>
-              <strong>Email:</strong> roxanne.roxas@email.lcup.edu.ph
+              <FaEnvelope className="info-icon" /> roxanne.roxas@email.lcup.edu.ph
             </li>
             <li>
-              <strong>Phone:</strong> +63 960 390 4241
+              <FaPhoneAlt className="info-icon" /> +63 960 390 4241
             </li>
             <li>
-              <strong>Address:</strong> Bulacan, City of Malolos, Philippines
+              <FaMapMarkerAlt className="info-icon" /> Bulacan, City of Malolos, Philippines
             </li>
           </ul>
 
-    
           <div className="info-sections two-columns">
-            
             <div className="info-section">
               <h2>
-                <i className="section-icon fas fa-graduation-cap"></i>Education
+                <FaGraduationCap className="section-icon" /> Education
               </h2>
               <div className="cards-grid">
                 {educationData.map((edu, index) => (
@@ -77,7 +73,7 @@ const AboutMe = () => {
                       <ul>
                         {edu.awards.map((award, i) => (
                           <li key={i}>
-                            <i className="list-icon fas fa-award"></i>
+                            <FaAward className="list-icon" />
                             {award}
                           </li>
                         ))}
@@ -88,18 +84,16 @@ const AboutMe = () => {
               </div>
             </div>
 
-           
             <div className="info-section">
               <h2>
-                <i className="section-icon fas fa-trophy"></i>Achievements &
-                Certifications
+                <FaTrophy className="section-icon" /> Achievements & Certifications
               </h2>
               <div className="cards-grid">
                 <div className="card">
                   <ul>
                     {achievementsData.map((achievement, index) => (
                       <li key={index}>
-                        <i className="list-icon fas fa-check-circle"></i>
+                        <FaCheckCircle className="list-icon" />
                         {achievement}
                       </li>
                     ))}
