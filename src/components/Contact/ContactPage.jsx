@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import emailjs from "emailjs-com";
 import "./ContactPage.css";
 import { FaEnvelope, FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
 
 const ContactPage = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [emails, setEmails] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [formStatus, setFormStatus] = useState("");
+  const [isClosing, setIsClosing] = useState(false);
+  const form = useRef();
 
   useEffect(() => {
     const fetchEmails = async () => {
@@ -21,6 +25,39 @@ const ContactPage = () => {
     fetchEmails();
   }, []);
 
+  const sendEmail = (e) => {
+    e.preventDefault();
+    setFormStatus("Sending...");
+
+    emailjs
+      .sendForm(
+        "service_a68fwe3", 
+        "template_kpic359", 
+        form.current,
+        "ILJx2OdUM_cafwinA" 
+      )
+      .then(
+        () => {
+          setFormStatus("✅ Message sent successfully!");
+          e.target.reset();
+          setTimeout(() => handleClose(), 1500);
+        },
+        (error) => {
+          console.error("Email send error:", error);
+          setFormStatus("❌ Failed to send message. Try again later.");
+        }
+      );
+  };
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowForm(false);
+      setIsClosing(false);
+      setFormStatus("");
+    }, 300); 
+  };
+
   return (
     <section className="contact-page">
       <div className="contact-container">
@@ -31,37 +68,14 @@ const ContactPage = () => {
 
         <ul className="contact-list">
           <li className="contact-item">
-
             <div
               className="gmail-notification"
-              onClick={() => setShowDropdown(!showDropdown)}
+              onClick={() => setShowForm(true)}
             >
               <FaEnvelope className="contact-icon gmail-icon" />
               {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
-
-              {showDropdown && (
-                <div className="dropdown">
-                  {emails.length === 0 ? (
-                    <p className="loading">Checking for new emails...</p>
-                  ) : (
-                    <ul className="email-list">
-                      {emails.map((email) => (
-                        <li key={email.id}>
-                          <strong>{email.sender}</strong>
-                          <span>{email.subject}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
             </div>
-
-            <a
-              href="https://mail.google.com/mail/?view=cm&fs=1&to=roxanne.roxas@email.lcup.edu.ph"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href="#" onClick={(e) => { e.preventDefault(); setShowForm(true); }}>
               roxanne.roxas@email.lcup.edu.ph
             </a>
           </li>
@@ -92,6 +106,28 @@ const ContactPage = () => {
           </li>
         </ul>
       </div>
+
+      {showForm && (
+        <div
+          className={`popup-overlay ${isClosing ? "hide" : ""}`}
+          onClick={handleClose}
+        >
+          <div className="popup-container" onClick={(e) => e.stopPropagation()}>
+            <h3>📩 Send a Message</h3>
+            <form ref={form} onSubmit={sendEmail} className="contact-form">
+              <input type="text" name="name" placeholder="Your Name" required />
+              <input type="email" name="email" placeholder="Your Email" required />
+              <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+              <button type="submit">Send Message</button>
+              {formStatus && <p className="form-status">{formStatus}</p>}
+            </form>
+
+            <button className="close-btn" onClick={handleClose}>
+              ✖ Close
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

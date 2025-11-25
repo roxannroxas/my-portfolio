@@ -1,4 +1,4 @@
-/* === Base Contact Page Styling === */
+
 .contact-page {
   min-height: 100vh;
   width: 100%;
@@ -73,7 +73,7 @@
   color: #a970ff;
 }
 
-/* === Gmail Notification Add-on === */
+
 .gmail-notification {
   position: relative;
   cursor: pointer;
@@ -147,7 +147,163 @@
   padding: 10px;
 }
 
-/* === Responsive === */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 0, 35, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center; 
+  align-items: center;     
+  z-index: 999;
+
+}
+
+.popup-container {
+  background: rgba(45, 0, 70, 0.75);
+  border: 1px solid rgba(174, 109, 255, 0.35);
+  border-radius: 16px;
+  padding: 2.8rem 2.8rem;
+  width: 95%;
+  max-width: 420px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 
+    0 0 25px rgba(167, 112, 255, 0.45),
+    0 0 60px rgba(126, 60, 255, 0.25);
+  animation: popBounce 0.45s ease forwards;
+  backdrop-filter: blur(14px);
+}
+
+@keyframes popBounce {
+  0%   { transform: scale(0.85); opacity: 0; }
+  60%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+
+
+.popup-container h3 {
+  font-size: 1.75rem;
+  margin-bottom: 1.2rem;
+  color: #d8b4ff;
+  text-shadow: 0 0 10px rgba(208, 159, 255, 0.6);
+}
+
+
+.popup-container .input-group {
+   margin-top: 8px;
+  margin-bottom: 18px;
+}
+
+.popup-container input,
+.popup-container textarea {
+  width: 100%;
+  padding: 16px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(170, 109, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  box-sizing: border-box;
+  margin: 10px 0;
+
+}
+
+.popup-container input:focus,
+.popup-container textarea:focus {
+  background: inherit;
+  border-color: rgba(170, 109, 255, 0.35);
+  box-shadow: none;
+  outline: none;
+}
+
+.popup-container input::placeholder,
+.popup-container textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+
+.popup-container button[type="submit"] {
+  margin-top: 15px;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #b36bff, #8e3cff);
+  border: none;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 0 18px rgba(164, 67, 255, 0.45);
+  transition: all 0.3s ease;
+}
+
+.popup-container button[type="submit"]:hover {
+  background: linear-gradient(135deg, #ca8cff, #a165ff);
+  box-shadow: 0 0 28px rgba(181, 91, 255, 0.7);
+  transform: translateY(-2px);
+}
+
+.popup-container button[type="submit"]:active {
+  transform: translateY(1px);
+}
+
+
+.close-btn {
+  margin-top: 12px;
+  background: transparent;
+  border: 1px solid #b36bff;
+  color: #d8b4ff;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.close-btn:hover {
+  background: rgba(180, 106, 255, 0.25);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(183, 98, 255, 0.6);
+}
+
+
+.form-status {
+  margin-top: 12px;
+  font-size: 1rem;
+  color: #e5c7ff;
+  text-shadow: 0 0 8px rgba(200, 162, 255, 0.6);
+}
+
+
+@media (max-width: 576px) {
+  .popup-container {  
+    padding: 1.5rem 1rem;
+  }
+
+  .popup-container h3 {
+    font-size: 1.5rem;
+  }
+
+  .popup-container button[type="submit"] {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  .close-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+
+
 @media (max-width: 576px) {
   .contact-title {
     font-size: 2rem;
