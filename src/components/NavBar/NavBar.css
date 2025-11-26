@@ -3,10 +3,10 @@
   top: 0;
   left: 0;
   width: 100%;
-  background: #111;
+ background: transparent; 
   padding: 18px 40px;
   z-index: 1000;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+ 
 }
 
 .navbar-container {

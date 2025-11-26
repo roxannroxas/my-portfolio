@@ -1,5 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+
+
 import Navbar from "./components/NavBar/NavBar"; 
 import Header from "./components/Header/Header";
 import About from "./components/About/About";
@@ -13,13 +15,23 @@ import API from "./components/API/API";
 import CatSurprise from "./components/CatSurprise/CatSurprise";
 import RickMortyAPI from "./components/API/RickMortyAPI";
 
+
+import Aurora from "./components/Aurora/Aurora"; 
+
 import "./App.css";
 
 function App() {
   return (
     <div className="app-container">
+ 
+      <Aurora 
+        colorStops={['#2d0b45', '#8A2BE2', '#000000']} 
+        speed={0.5} 
+        amplitude={1.0} 
+      />
+
       <Routes>
-        {/* Home Page */}
+
         <Route
           path="/"
           element={
@@ -33,7 +45,7 @@ function App() {
           }
         />
 
-        {/* About Me Page */}
+
         <Route
           path="/about-me"
           element={
@@ -44,7 +56,7 @@ function App() {
           }
         />
 
-        {/* Projects Page */}
+
         <Route
           path="/projects"
           element={
@@ -55,7 +67,7 @@ function App() {
           }
         />
 
-        {/* Skills Full Page */}
+
         <Route
           path="/skills"
           element={
@@ -66,7 +78,7 @@ function App() {
           }
         />
 
-        {/* Contact Full Page */}
+
         <Route
           path="/contact"
           element={
@@ -78,10 +90,10 @@ function App() {
         />
       </Routes>
 
-      {/* Sidebar Components */}
+
       <API />
       <CatSurprise />
-      <RickMortyAPI />
+  
     </div>
   );
 }

@@ -71,10 +71,10 @@ const AboutMe = () => {
 
 
 
-        {/* --- BOTTOM ROW: HORIZONTAL STACKS --- */}
+
         <div className="scrollstack-wrapper two-columns">
           
-          {/* Education Stack */}
+
           <div className="scrollstack-column">
             <h3 className="section-title">
               <FaGraduationCap /> Education
@@ -103,7 +103,6 @@ const AboutMe = () => {
             </div>
           </div>
 
-          {/* Achievements Stack */}
           <div className="scrollstack-column">
             <h3 className="section-title">
               <FaTrophy /> Achievements & Certifications

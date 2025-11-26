@@ -2,7 +2,7 @@
   width: 100%;
   min-height: 100vh;
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #000000, #2d0b45);
+ background: transparent; 
   color: #fff;
   display: flex;
   flex-direction: column;

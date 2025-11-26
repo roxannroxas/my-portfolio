@@ -1,76 +1,79 @@
-/* ElectricBorder.css - Universal Browser Support Version */
-.electric-border {
-  /* Fallback if variable is missing */
-  --electric-border-color: #a970ff;
-  --eb-border-width: 2px;
-  
-  position: relative;
-  border-radius: inherit;
-  overflow: visible;
-  isolation: isolate;
-  display: block; /* Ensure it takes space */
+
+
+.skills-section {
+  padding: 4rem 2rem;
+
+background: transparent; 
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* The SVG filter definition - hidden from view */
-.eb-svg {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
+.section-title {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: #d8b4fe;
+  text-shadow: 0 0 10px rgba(216, 180, 254, 0.5);
+  font-weight: bold;
 }
 
-.eb-content {
-  position: relative;
-  border-radius: inherit;
-  z-index: 2; /* Content sits on top of glow */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 900px;
+  justify-items: center;
+}
+
+.skill-card-wrapper {
   height: 100%;
+  border-radius: 12px;
 }
 
-.eb-layers {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 1; /* Glow sits behind content */
-}
 
-.eb-stroke,
-.eb-glow-1,
-.eb-glow-2,
-.eb-background-glow {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
+.skill-card-inner {
+
+  background-color: #0f0518; 
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  width: 100%;
   box-sizing: border-box;
 }
 
-/* 1. Main Border Line */
-.eb-stroke {
-  border: var(--eb-border-width) solid var(--electric-border-color);
+.skill-icon {
+  font-size: 3rem;
+  color: #e879f9;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
 }
 
-/* 2. Inner/Outer Glow (Simpler opacity method) */
-.eb-glow-1 {
-  border: var(--eb-border-width) solid var(--electric-border-color);
-  opacity: 0.6;
-  filter: blur(2px);
+.skill-card-wrapper:hover .skill-icon {
+  transform: scale(1.1);
 }
 
-/* 3. Wider Glow (Using brightness instead of oklch) */
-.eb-glow-2 {
-  border: var(--eb-border-width) solid var(--electric-border-color);
-  opacity: 0.4;
-  filter: blur(6px) brightness(1.5); /* Makes it look "lighter" */
+.skill-card-inner h3 {
+  font-size: 1.25rem;
+  color: #a855f7;
+  margin-bottom: 1rem;
 }
 
-/* 4. Background Ambiance */
-.eb-background-glow {
-  z-index: -1;
-  transform: scale(1.02);
-  filter: blur(20px);
-  opacity: 0.2;
-  background: var(--electric-border-color);
+.skill-card-inner ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.skill-card-inner li {
+  color: #e5e5e5;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  font-weight: 300;
 }

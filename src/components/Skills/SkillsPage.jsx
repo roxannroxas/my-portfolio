@@ -1,28 +1,33 @@
 import React from "react";
 import "./SkillsPage.css";
+import ElectricBorder from "../ElectricBorder/ElectricBorder";
 import {
   FaReact,
   FaPhp,
   FaPython,
   FaJava,
-  FaWordpress,
-  FaDatabase,
   FaGamepad,
   FaNetworkWired,
   FaGitAlt,
 } from "react-icons/fa";
 
-
 const SkillCard = ({ icon, category, skills }) => (
-  <div className="skill-card">
-    <div className="skill-icon">{icon}</div>
-    <h3>{category}</h3>
-    <ul>
-      {skills.map((skill, index) => (
-        <li key={index}>{skill}</li>
-      ))}
-    </ul>
-  </div>
+  <ElectricBorder 
+    color="#bd73ff" 
+    thickness={2} 
+    className="skill-card-wrapper"
+    style={{ borderRadius: "12px" }}
+  >
+    <div className="skill-card-inner">
+      <div className="skill-icon">{icon}</div>
+      <h3>{category}</h3>
+      <ul>
+        {skills.map((skill, index) => (
+          <li key={index}>{skill}</li>
+        ))}
+      </ul>
+    </div>
+  </ElectricBorder>
 );
 
 const SkillsPage = () => {
@@ -36,9 +41,9 @@ const SkillsPage = () => {
   ];
 
   return (
-    <section className="skills-page">
+    <section className="skills-section">
       <h2 className="section-title">My Skills</h2>
-      <div className="skills-container">
+      <div className="skills-grid">
         {skillData.map((item, index) => (
           <SkillCard key={index} {...item} />
         ))}

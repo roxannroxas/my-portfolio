@@ -4,7 +4,8 @@ import { FaGithub, FaLinkedin, FaFacebook, FaEnvelope } from "react-icons/fa";
 import { ReactTyped } from "react-typed"; 
 import "./Header.css";
 import profilePic from "../../assets/me.png";
-import resumePDF from "../../assets/resume.pdf"; // ✅ Import your resume file
+import resumePDF from "../../assets/resume.pdf"; 
+import MetaBalls from "../MetaBalls/MetaBalls";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -13,7 +14,6 @@ const Header = () => {
     navigate("/about-me");
   };
 
-  // ✅ Function to open resume in a new tab
   const handleResumeClick = () => {
     window.open(resumePDF, "_blank");
   };
@@ -21,11 +21,11 @@ const Header = () => {
   return (
     <section className="hero">
       <div className="hero-overlay"></div>
+      
       <div className="hero-container">
         <div className="hero-left">
           <p className="greeting">WELCOME TO MY PORTFOLIO</p>
 
-          {/* 🔥 Typing animation with looping phrases */}
           <h1 className="name">
             <ReactTyped
               strings={[
@@ -48,48 +48,47 @@ const Header = () => {
             <button className="cta-btn" onClick={handleClick}>
               View About Me
             </button>
-
-           
             <button className="cta-btn secondary" onClick={handleResumeClick}>
               My Resume
             </button>
           </div>
 
           <div className="social-icons">
-            <a
-              href="https://github.com/roxannroxas"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href="https://github.com/roxannroxas" target="_blank" rel="noreferrer">
               <FaGithub />
             </a>
-            <a
-              href="https://www.linkedin.com/in/roxanne-roxas-758977382/"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href="https://www.linkedin.com/in/roxanne-roxas-758977382/" target="_blank" rel="noreferrer">
               <FaLinkedin />
             </a>
-            <a
-              href="https://www.facebook.com/rxsroxanne17"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href="https://www.facebook.com/rxsroxanne17" target="_blank" rel="noreferrer">
               <FaFacebook />
             </a>
-            <a
-              href="https://mail.google.com/mail/?view=cm&fs=1&to=roxanne.roxas@gmail.lcup.edu.ph"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=roxanne.roxas@gmail.lcup.edu.ph" target="_blank" rel="noreferrer">
               <FaEnvelope />
             </a>
           </div>
         </div>
 
-        <div className="hero-right">
-          <img src={profilePic} alt="Profile" className="hero-img" />
-        </div>
+<div className="hero-right">
+
+  <div className="hero-blob-bg">
+    <MetaBalls
+      color="#bd73ff"     
+      cursorBallColor="#bd73ff"
+      cursorBallSize={2}
+  ballCount={15}
+  animationSize={30}
+  enableMouseInteraction={true}
+  enableTransparency={true}
+  hoverSmoothness={0.05}
+  clumpFactor={1}
+  speed={0.3}          
+    />
+  </div>
+
+
+  <img src={profilePic} alt="Profile" className="hero-img" />
+</div>
       </div>
     </section>
   );
