@@ -1,8 +1,8 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
-import "./NavBar.css";
+import "./AppNav.css";
 
-const NavBar = () => {
+const AppNav = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -24,4 +24,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default AppNav;

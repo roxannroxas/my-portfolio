@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../NavBar/NavBar";
+import Navbar from "../NavBar/AppNav";
 import "./AboutMe.css";
 import profilePic from "../../assets/me.png";
 import {
