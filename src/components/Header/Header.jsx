@@ -4,7 +4,7 @@ import { FaGithub, FaLinkedin, FaFacebook, FaEnvelope } from "react-icons/fa";
 import { ReactTyped } from "react-typed"; 
 import "./Header.css";
 import profilePic from "../../assets/me.png";
-import resumePDF from "../../assets/resume.pdf"; 
+import resumePDF from "../../assets/Resume.pdf"; 
 import MetaBalls from "../MetaBalls/MetaBalls";
 
 const Header = () => {
