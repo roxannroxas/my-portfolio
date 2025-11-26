@@ -78,12 +78,10 @@ function App() {
         />
       </Routes>
 
-      {/* ✅ Add the API sidebar globally here */}
+      {/* Sidebar Components */}
       <API />
       <CatSurprise />
-    
-       
-        <RickMortyAPI />
+      <RickMortyAPI />
     </div>
   );
 }

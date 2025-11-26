@@ -2,7 +2,15 @@ import React from "react";
 import Navbar from "../NavBar/NavBar";
 import "./AboutMe.css";
 import profilePic from "../../assets/me.png";
-import { FaGraduationCap, FaAward, FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaCheckCircle, FaTrophy } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaCheckCircle,
+  FaGraduationCap,
+  FaTrophy,
+} from "react-icons/fa";
+import ScrollStack, { ScrollStackItem } from "../ScrollStack/ScrollStack";
 
 const AboutMe = () => {
   const educationData = [
@@ -34,9 +42,12 @@ const AboutMe = () => {
     <>
       <Navbar />
       <section className="aboutme-hero">
+        
+ 
         <div className="aboutme-left">
           <img src={profilePic} alt="Roxanne Roxas" />
         </div>
+
 
         <div className="aboutme-right">
           <h2>Hello, I’m</h2>
@@ -56,53 +67,64 @@ const AboutMe = () => {
               <FaMapMarkerAlt className="info-icon" /> Bulacan, City of Malolos, Philippines
             </li>
           </ul>
+        </div> 
 
-          <div className="info-sections two-columns">
-            <div className="info-section">
-              <h2>
-                <FaGraduationCap className="section-icon" /> Education
-              </h2>
-              <div className="cards-grid">
-                {educationData.map((edu, index) => (
-                  <div key={index} className="card">
-                    <p>
-                      <strong>{edu.school}</strong>
-                    </p>
-                    <p>{edu.detail}</p>
+
+
+        {/* --- BOTTOM ROW: HORIZONTAL STACKS --- */}
+        <div className="scrollstack-wrapper two-columns">
+          
+          {/* Education Stack */}
+          <div className="scrollstack-column">
+            <h3 className="section-title">
+              <FaGraduationCap /> Education
+            </h3>
+            
+            <div className="scrollstack-container-wrapper">
+              <ScrollStack>
+                {educationData.map((edu, idx) => (
+                  <ScrollStackItem key={idx}>
+                    <h2 style={{ color: "#a970ff", marginBottom: "0.5rem" }}>
+                      {edu.school}
+                    </h2>
+                    <p style={{ marginBottom: "1rem" }}>{edu.detail}</p>
                     {edu.awards && (
-                      <ul>
+                      <ul style={{ paddingLeft: "1rem", marginTop: "0.5rem" }}>
                         {edu.awards.map((award, i) => (
-                          <li key={i}>
-                            <FaAward className="list-icon" />
-                            {award}
+                          <li key={i} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <FaCheckCircle color="#a970ff" /> {award}
                           </li>
                         ))}
                       </ul>
                     )}
-                  </div>
+                  </ScrollStackItem>
                 ))}
-              </div>
-            </div>
-
-            <div className="info-section">
-              <h2>
-                <FaTrophy className="section-icon" /> Achievements & Certifications
-              </h2>
-              <div className="cards-grid">
-                <div className="card">
-                  <ul>
-                    {achievementsData.map((achievement, index) => (
-                      <li key={index}>
-                        <FaCheckCircle className="list-icon" />
-                        {achievement}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              </ScrollStack>
             </div>
           </div>
+
+          {/* Achievements Stack */}
+          <div className="scrollstack-column">
+            <h3 className="section-title">
+              <FaTrophy /> Achievements & Certifications
+            </h3>
+            
+            <div className="scrollstack-container-wrapper">
+              <ScrollStack>
+                {achievementsData.map((ach, idx) => (
+                  <ScrollStackItem key={idx}>
+                     <div style={{ display: "flex", alignItems: "center", gap: "10px", height: "100%" }}>
+                        <FaCheckCircle size={24} color="#a970ff" /> 
+                        <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>{ach}</span>
+                     </div>
+                  </ScrollStackItem>
+                ))}
+              </ScrollStack>
+            </div>
+          </div>
+
         </div>
+
       </section>
     </>
   );

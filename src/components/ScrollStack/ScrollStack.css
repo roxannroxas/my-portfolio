@@ -1,0 +1,67 @@
+.scrollstack-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 50px auto;
+  height: 350px;
+  perspective: 1500px;
+}
+
+.scrollstack-item {
+  position: absolute;
+  width: 100%;
+  padding: 25px 20px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1a1a1a, #2d0b45);
+  color: #fff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transform: translateY(30px) scale(0.9) rotateX(10deg);
+  opacity: 0;
+  transition: all 0.7s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.scrollstack-item h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: #a970ff;
+}
+
+.scrollstack-item p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #ddd;
+}
+
+.scrollstack-item ul {
+  margin-top: 0.5rem;
+}
+
+.scrollstack-item li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #eee;
+}
+
+
+.scrollstack-item.active {
+  transform: translateY(0) scale(1) rotateX(0deg);
+  opacity: 1;
+  z-index: 3;
+}
+
+
+.scrollstack-item.next {
+  transform: translateY(20px) scale(0.95) rotateX(5deg);
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.scrollstack-item.inactive {
+  opacity: 0;
+  z-index: 1;
+}

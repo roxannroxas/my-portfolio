@@ -1,0 +1,76 @@
+/* ElectricBorder.css - High Visibility Neon Version */
+.electric-border {
+  --electric-border-color: #a970ff; /* Default fallback */
+  --eb-border-width: 2px;
+  
+  position: relative;
+  border-radius: inherit;
+  display: block;
+  z-index: 1;
+}
+
+/* The SVG filter - keeps the wobbly effect */
+.eb-svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.eb-content {
+  position: relative;
+  border-radius: inherit;
+  z-index: 10;
+  height: 100%;
+}
+
+.eb-layers {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.eb-stroke,
+.eb-glow-1,
+.eb-glow-2,
+.eb-background-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* 1. THE CORE LINE (Make this bright/white to look like electricity) */
+.eb-stroke {
+  border: var(--eb-border-width) solid #e0caff; /* Very light purple/white */
+  opacity: 0.9; /* Almost solid */
+  filter: drop-shadow(0 0 2px var(--electric-border-color));
+  z-index: 4;
+}
+
+/* 2. THE MAIN COLOR GLOW */
+.eb-glow-1 {
+  border: calc(var(--eb-border-width) + 1px) solid var(--electric-border-color);
+  opacity: 1;
+  filter: blur(2px);
+  z-index: 3;
+}
+
+/* 3. THE OUTER HALO */
+.eb-glow-2 {
+  border: calc(var(--eb-border-width) + 2px) solid var(--electric-border-color);
+  opacity: 0.6;
+  filter: blur(8px);
+  z-index: 2;
+}
+
+/* 4. BACKGROUND AMBIANCE (Optional - subtle fill) */
+.eb-background-glow {
+  background: var(--electric-border-color);
+  opacity: 0.05; /* Very subtle tint inside the card */
+  filter: blur(20px);
+  z-index: 1;
+}

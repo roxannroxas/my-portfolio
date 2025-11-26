@@ -1,95 +1,76 @@
-
-.skills-section {
-  width: 100%;
-  min-height: 100vh;
-   background: linear-gradient(135deg, #000000, #2d0b45); 
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 4rem 2rem;
+/* ElectricBorder.css - Universal Browser Support Version */
+.electric-border {
+  /* Fallback if variable is missing */
+  --electric-border-color: #a970ff;
+  --eb-border-width: 2px;
+  
+  position: relative;
+  border-radius: inherit;
+  overflow: visible;
+  isolation: isolate;
+  display: block; /* Ensure it takes space */
 }
 
-.section-title {
-  font-size: 2.5rem;
-  color: #a970ff;
-  margin-bottom: 2rem;
-  text-align: center;
+/* The SVG filter definition - hidden from view */
+.eb-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
 }
 
-
-.skills-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 1000px;
-  list-style: none; 
-  padding: 0;
-  margin: 0;
+.eb-content {
+  position: relative;
+  border-radius: inherit;
+  z-index: 2; /* Content sits on top of glow */
+  height: 100%;
 }
 
-
-.skill-card {
-  background: rgba(25, 25, 25, 0.6);
-  padding: 1.5rem;
-  border-radius: 1rem;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+.eb-layers {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1; /* Glow sits behind content */
 }
 
-.skill-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+.eb-stroke,
+.eb-glow-1,
+.eb-glow-2,
+.eb-background-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
 }
 
-.skill-card h3 {
-  color: #a970ff;
-  margin-bottom: 0.8rem;
+/* 1. Main Border Line */
+.eb-stroke {
+  border: var(--eb-border-width) solid var(--electric-border-color);
 }
 
-.skill-card ul {
-  list-style: none; 
-  padding: 0;
-  margin: 0;
+/* 2. Inner/Outer Glow (Simpler opacity method) */
+.eb-glow-1 {
+  border: var(--eb-border-width) solid var(--electric-border-color);
+  opacity: 0.6;
+  filter: blur(2px);
 }
 
-.skill-card ul li {
-  color: #d1d1d1;
-  font-size: 1rem;
-  line-height: 1.6;
+/* 3. Wider Glow (Using brightness instead of oklch) */
+.eb-glow-2 {
+  border: var(--eb-border-width) solid var(--electric-border-color);
+  opacity: 0.4;
+  filter: blur(6px) brightness(1.5); /* Makes it look "lighter" */
 }
 
-
-.skill-icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  color: #ff6ec7; 
-  transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.skill-card:hover .skill-icon {
-  transform: scale(1.2);
-  color: #a970ff; 
-}
-
-
-@media (max-width: 768px) {
-  .skills-container {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-
-  .skill-card ul li {
-    font-size: 0.9rem;
-  }
-
-  .skill-icon {
-    font-size: 2rem;
-  }
+/* 4. Background Ambiance */
+.eb-background-glow {
+  z-index: -1;
+  transform: scale(1.02);
+  filter: blur(20px);
+  opacity: 0.2;
+  background: var(--electric-border-color);
 }
