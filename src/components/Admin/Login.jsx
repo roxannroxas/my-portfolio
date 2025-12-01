@@ -28,7 +28,7 @@ const Login = () => {
 
   return (
     <div style={{ 
-      position: "fixed",       // FIXED: Floats above everything
+      position: "fixed",       
       top: 0,
       left: 0,
       width: "100%",
@@ -36,18 +36,18 @@ const Login = () => {
       display: "flex", 
       justifyContent: "center", 
       alignItems: "center",
-      zIndex: 9999,            // HIGH Z-INDEX: Ensures it's the top layer
-      backgroundColor: "#111"  // SOLID BACKGROUND: Hides the rest of the site
+      zIndex: 9999,           
+      backgroundColor: "#111" 
     }}>
       <form onSubmit={handleLogin} style={{ 
         display: "flex", 
         flexDirection: "column", 
         gap: "1.5rem", 
-        background: "#1e1e1e", // Dark card background
+        background: "#1e1e1e", 
         padding: "2.5rem", 
         borderRadius: "12px", 
         border: "1px solid #8A2BE2",
-        boxShadow: "0 0 20px rgba(138, 43, 226, 0.5)", // Glow effect
+        boxShadow: "0 0 20px rgba(138, 43, 226, 0.5)", 
         width: "350px",
         maxWidth: "90%"
       }}>

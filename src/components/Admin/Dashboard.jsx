@@ -3,9 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { FaProjectDiagram, FaUser, FaCode, FaAddressBook, FaSignOutAlt, FaTrash, FaPlus } from "react-icons/fa";
 
-// ==========================================
-// MAIN DASHBOARD LAYOUT
-// ==========================================
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -29,9 +27,9 @@ const Dashboard = () => {
 
   return (
     <div style={styles.container}>
-      {/* SIDEBAR */}
+
       <div style={styles.sidebar}>
-        <h2 style={styles.logo}>Admin Panel</h2>
+        <h2 style={styles.logo}>Kirby's Panel</h2>
         <nav style={styles.nav}>
           <NavButton label="Projects" icon={<FaProjectDiagram />} tab="projects" active={activeTab} set={setActiveTab} />
           <NavButton label="Skills" icon={<FaCode />} tab="skills" active={activeTab} set={setActiveTab} />
@@ -41,9 +39,10 @@ const Dashboard = () => {
         <button onClick={handleLogout} style={styles.logoutBtn}><FaSignOutAlt /> Logout</button>
       </div>
 
-      {/* MAIN CONTENT AREA */}
+
       <div style={styles.mainContent}>
-        <h2 style={styles.header}>{activeTab.replace(/([A-Z])/g, ' $1').trim()} Manager</h2>
+        <h2 style={styles.header}>
+  {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Manager</h2>
         {activeTab === "projects" && <ProjectsManager />}
         {activeTab === "skills" && <SkillsManager />}
         {activeTab === "about" && <AboutManager />}
@@ -53,14 +52,17 @@ const Dashboard = () => {
   );
 };
 
-// ==========================================
-// 1. PROJECTS MANAGER
-// ==========================================
 const ProjectsManager = () => {
   const [projects, setProjects] = useState([]);
+  
+
   const [form, setForm] = useState({ title: "", tech: "", desc: "" });
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  
+
+  const [editingId, setEditingId] = useState(null); 
+  const [oldImageUrl, setOldImageUrl] = useState(""); 
 
   const fetchProjects = async () => {
     let { data } = await supabase.from('projects').select('*').order('id', { ascending: false });
@@ -69,24 +71,78 @@ const ProjectsManager = () => {
 
   useEffect(() => { fetchProjects(); }, []);
 
+
+  const handleEditClick = (project) => {
+    setEditingId(project.id);
+    setForm({ 
+      title: project.title, 
+      tech: project.tech, 
+      desc: project.description 
+    });
+    setOldImageUrl(project.image_url);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setForm({ title: "", tech: "", desc: "" });
+    setImageFile(null);
+    setOldImageUrl("");
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!imageFile) return alert("Please select an image!");
     setUploading(true);
+
     try {
-      const fileName = `${Date.now()}.${imageFile.name.split('.').pop()}`;
-      await supabase.storage.from('project-images').upload(fileName, imageFile);
-      const { data: { publicUrl } } = supabase.storage.from('project-images').getPublicUrl(fileName);
-      await supabase.from('projects').insert({ 
-        title: form.title, tech: form.tech, description: form.desc, image_url: publicUrl 
-      });
-      alert("Project Added!");
-      setForm({ title: "", tech: "", desc: "" }); setImageFile(null); fetchProjects();
-    } catch (err) { alert(err.message); } finally { setUploading(false); }
+      let publicUrl = oldImageUrl; 
+
+
+      if (imageFile) {
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage.from('project-images').upload(fileName, imageFile);
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage.from('project-images').getPublicUrl(fileName);
+        publicUrl = data.publicUrl;
+      } else if (!editingId && !imageFile) {
+        alert("Please select an image for a new project!");
+        setUploading(false);
+        return;
+      }
+
+      const projectData = { 
+        title: form.title, 
+        tech: form.tech, 
+        description: form.desc, 
+        image_url: publicUrl 
+      };
+
+      if (editingId) {
+        const { error } = await supabase.from('projects').update(projectData).eq('id', editingId);
+        if (error) throw error;
+        alert("Project Updated Successfully!");
+      } else {
+        const { error } = await supabase.from('projects').insert(projectData);
+        if (error) throw error;
+        alert("Project Added Successfully!");
+      }
+
+      handleCancelEdit();
+      fetchProjects();
+
+    } catch (err) { 
+      alert("Error: " + err.message); 
+    } finally { 
+      setUploading(false); 
+    }
   };
 
   const handleDelete = async (id) => {
-    if(window.confirm("Delete this project?")) {
+    if(window.confirm("Are you sure you want to delete this project?")) {
       await supabase.from('projects').delete().eq('id', id);
       fetchProjects();
     }
@@ -95,21 +151,57 @@ const ProjectsManager = () => {
   return (
     <div style={styles.fadeIn}>
       <div style={styles.card}>
-        <h4>Add New Project</h4>
+        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px"}}>
+          <h4 style={{margin: 0}}>{editingId ? "Edit Project" : "Add New Project"}</h4>
+          {editingId && (
+            <button onClick={handleCancelEdit} style={{background: "gray", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer"}}>
+              Cancel Edit
+            </button>
+          )}
+        </div>
+
         <form onSubmit={handleSubmit} style={styles.form}>
           <input placeholder="Project Title" value={form.title} onChange={e => setForm({...form, title: e.target.value})} style={styles.input} />
           <input placeholder="Tech Stack (e.g. React, Supabase)" value={form.tech} onChange={e => setForm({...form, tech: e.target.value})} style={styles.input} />
           <textarea placeholder="Description" value={form.desc} onChange={e => setForm({...form, desc: e.target.value})} rows="3" style={styles.input} />
-          <input type="file" onChange={e => setImageFile(e.target.files[0])} style={{color: "#ccc"}} />
-          <button type="submit" disabled={uploading} style={styles.primaryBtn}>{uploading ? "Uploading..." : "Add Project"}</button>
+          
+          <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
+             <label style={{fontSize: "0.9rem", color: "#ccc"}}>
+               {editingId ? "Change Image (Optional)" : "Project Image"}
+             </label>
+             <input 
+                type="file" 
+                accept="image/*" 
+                onChange={e => setImageFile(e.target.files[0])} 
+                style={{color: "#ccc", padding: "10px", background: "#2a2a2a", borderRadius: "5px", border: "1px solid #444"}} 
+             />
+          </div>
+
+          <button type="submit" disabled={uploading} style={editingId ? styles.updateBtn : styles.primaryBtn}>
+            {uploading ? "Processing..." : (editingId ? "Update Project" : "Add Project")}
+          </button>
         </form>
       </div>
+
       <div style={styles.grid}>
         {projects.map(p => (
           <div key={p.id} style={styles.itemCard}>
-            <img src={p.image_url} alt="project" style={{width: "100%", height: "120px", objectFit: "cover", borderRadius: "5px"}} />
-            <h4>{p.title}</h4>
-            <button onClick={() => handleDelete(p.id)} style={styles.deleteBtn}><FaTrash /> Delete</button>
+            <div style={{position: "relative", height: "120px", background: "#333", borderRadius: "5px", overflow: "hidden"}}>
+              <img src={p.image_url} alt="project" style={{width: "100%", height: "100%", objectFit: "cover"}} />
+            </div>
+            
+            <h4 style={{margin: "10px 0 5px 0"}}>{p.title}</h4>
+            <p style={{fontSize: "0.8rem", color: "#ccc", marginBottom: "10px", flex: 1}}>{p.tech}</p>
+            
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "auto" }}>
+               <button onClick={() => handleEditClick(p)} style={styles.editBtn}>
+                 Edit
+               </button>
+               <button onClick={() => handleDelete(p.id)} style={styles.deleteBtn}>
+                 Delete
+               </button>
+            </div>
           </div>
         ))}
       </div>
@@ -117,9 +209,7 @@ const ProjectsManager = () => {
   );
 };
 
-// ==========================================
-// 2. SKILLS MANAGER
-// ==========================================
+
 const SkillsManager = () => {
   const [categories, setCategories] = useState([]);
   const [newCat, setNewCat] = useState({ category_name: "", skills_list: "" });
@@ -168,16 +258,13 @@ const SkillsManager = () => {
   );
 };
 
-// ==========================================
-// 3. ABOUT & EDUCATION MANAGER
-// ==========================================
+
+
 const AboutManager = () => {
   const [education, setEducation] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [newEdu, setNewEdu] = useState({ school: "", detail: "", awards: "" });
   const [newAch, setNewAch] = useState("");
-  
-  // Generic Text Manager (Bio)
   const [bio, setBio] = useState("");
 
   const fetchData = async () => {
@@ -194,20 +281,17 @@ const AboutManager = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  // Update Bio
   const saveBio = async () => {
     await supabase.from('site_content').upsert({ section_key: 'bio', content_text: bio }, { onConflict: 'section_key' });
     alert("Bio updated!");
   };
 
-  // Education Handlers
   const addEdu = async () => {
     await supabase.from('education').insert(newEdu);
     setNewEdu({ school: "", detail: "", awards: "" }); fetchData();
   };
   const deleteEdu = async (id) => { await supabase.from('education').delete().eq('id', id); fetchData(); };
 
-  // Achievement Handlers
   const addAch = async () => {
     await supabase.from('achievements').insert({ title: newAch });
     setNewAch(""); fetchData();
@@ -216,14 +300,12 @@ const AboutManager = () => {
 
   return (
     <div style={styles.fadeIn}>
-      {/* Bio Section */}
       <div style={styles.card}>
         <h4>Edit About Me Bio</h4>
         <textarea rows="4" value={bio} onChange={e => setBio(e.target.value)} style={styles.input} />
         <button onClick={saveBio} style={{...styles.primaryBtn, marginTop: '10px'}}>Save Bio</button>
       </div>
 
-      {/* Education Section */}
       <div style={styles.card}>
         <h4>Education</h4>
         <div style={{display: 'flex', gap: '10px', marginBottom: '10px'}}>
@@ -245,7 +327,6 @@ const AboutManager = () => {
         </div>
       </div>
 
-      {/* Achievements Section */}
       <div style={styles.card}>
         <h4>Achievements & Certifications</h4>
         <div style={{display: 'flex', gap: '10px'}}>
@@ -265,9 +346,7 @@ const AboutManager = () => {
   );
 };
 
-// ==========================================
-// 4. CONTACT MANAGER
-// ==========================================
+
 const ContactManager = () => {
   const [details, setDetails] = useState({
     email: "", phone: "", address: "", linkedin: "", github: "", facebook: ""
@@ -308,22 +387,16 @@ const ContactManager = () => {
         <div style={styles.form}>
           <label>Email Address</label>
           <input value={details.email} onChange={e => handleChange('email', e.target.value)} style={styles.input} />
-          
           <label>Phone Number</label>
           <input value={details.phone} onChange={e => handleChange('phone', e.target.value)} style={styles.input} />
-          
           <label>Address</label>
           <input value={details.address} onChange={e => handleChange('address', e.target.value)} style={styles.input} />
-          
           <label>LinkedIn URL</label>
           <input value={details.linkedin} onChange={e => handleChange('linkedin', e.target.value)} style={styles.input} />
-          
           <label>GitHub URL</label>
           <input value={details.github} onChange={e => handleChange('github', e.target.value)} style={styles.input} />
-          
           <label>Facebook URL</label>
           <input value={details.facebook} onChange={e => handleChange('facebook', e.target.value)} style={styles.input} />
-
           <button onClick={handleSave} style={{...styles.primaryBtn, marginTop: '20px'}}>Save All Changes</button>
         </div>
       </div>
@@ -331,9 +404,8 @@ const ContactManager = () => {
   );
 };
 
-// ==========================================
-// HELPERS & STYLES
-// ==========================================
+
+
 const NavButton = ({ label, icon, tab, active, set }) => (
   <button 
     onClick={() => set(tab)} 
@@ -344,7 +416,7 @@ const NavButton = ({ label, icon, tab, active, set }) => (
 );
 
 const styles = {
-  container: { display: "flex", minHeight: "100vh", backgroundColor: "#121212", color: "white", fontFamily: "'Segoe UI', sans-serif" },
+  container: { display: "flex", minHeight: "100vh", backgroundColor: "#121212", color: "white !important", fontFamily: "'Segoe UI', sans-serif" },
   sidebar: { width: "260px", backgroundColor: "#1e1e1e", padding: "20px", display: "flex", flexDirection: "column", borderRight: "1px solid #333" },
   mainContent: { flex: 1, padding: "40px", overflowY: "auto", background: "#121212" },
   logo: { marginBottom: "40px", color: "#bd73ff", textAlign: "center", fontSize: "1.5rem" },
@@ -352,20 +424,55 @@ const styles = {
   link: { background: "transparent", border: "none", color: "#aaa", textAlign: "left", padding: "12px 15px", cursor: "pointer", fontSize: "16px", borderRadius: "8px", display: "flex", alignItems: "center", transition: "0.2s" },
   activeLink: { background: "linear-gradient(90deg, #8A2BE2 0%, #bd73ff 100%)", border: "none", color: "white", textAlign: "left", padding: "12px 15px", cursor: "pointer", fontSize: "16px", borderRadius: "8px", display: "flex", alignItems: "center", fontWeight: "bold" },
   logoutBtn: { padding: "12px", background: "#d9534f", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", marginTop: "auto", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' },
-   header: { marginBottom: "30px", borderBottom: "1px solid #333", paddingBottom: "15px", color: "white !important" },
-   container: { display: "flex", minHeight: "100vh", backgroundColor: "#121212", color: "white !important", fontFamily: "'Segoe UI', sans-serif" },
+  header: { marginBottom: "30px", borderBottom: "1px solid #333", paddingBottom: "15px", color: "white !important" },
   card: { background: "#1e1e1e", padding: "25px", borderRadius: "12px", marginBottom: "25px", border: "1px solid #333" },
   form: { display: "flex", flexDirection: "column", gap: "12px" },
   input: { padding: "12px", background: "#2a2a2a", border: "1px solid #444", color: "white", borderRadius: "6px", width: "100%", boxSizing: "border-box" },
   primaryBtn: { padding: "12px 24px", background: "#8A2BE2", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", transition: "0.2s" },
+  updateBtn: { padding: "12px 24px", background: "#FFA500", color: "black", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", transition: "0.2s" },
   grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "20px" },
-  itemCard: { background: "#252525", padding: "15px", borderRadius: "10px", border: "1px solid #333" },
-  deleteBtn: { marginTop: "10px", background: "#ff4d4d", color: "white", border: "none", padding: "8px", borderRadius: "4px", cursor: "pointer", width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' },
+
+  itemCard: { 
+    background: "#252525", 
+    padding: "15px", 
+    borderRadius: "10px", 
+    border: "1px solid #333",
+    display: "flex", 
+    flexDirection: "column", 
+    justifyContent: "space-between", 
+    minHeight: "100%" 
+  },
+  
+
+  editBtn: { 
+    width: "100%", 
+    background: "#3498db", 
+    color: "white", 
+    border: "none", 
+    padding: "10px 0", 
+    borderRadius: "5px", 
+    cursor: "pointer", 
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  
+  deleteBtn: { 
+    width: "100%", 
+    background: "#ff4d4d", 
+    color: "white", 
+    border: "none", 
+    padding: "10px 0", 
+    borderRadius: "5px", 
+    cursor: "pointer", 
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+
   iconBtn: { background: "transparent", border: "none", color: "#ff4d4d", cursor: "pointer", fontSize: "1.2rem" },
   rowCard: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#252525', padding: '15px', borderRadius: '8px', borderLeft: '4px solid #bd73ff' },
   miniCard: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', background: '#2a2a2a', marginBottom: '8px', borderRadius: '5px' },
   loading: { height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "#121212", color: "white" },
-  
+
 };
 
 export default Dashboard;
