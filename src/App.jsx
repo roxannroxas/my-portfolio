@@ -1,6 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
-
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/NavBar/AppNav"; 
 import Header from "./components/Header/Header";
@@ -14,13 +13,18 @@ import ContactPage from "./components/Contact/ContactPage";
 import API from "./components/API/API"; 
 import CatSurprise from "./components/CatSurprise/CatSurprise";
 import RickMortyAPI from "./components/API/RickMortyAPI";
-
+import Login from "./components/Admin/Login";
+import Dashboard from "./components/Admin/Dashboard";
 
 import Aurora from "./components/Aurora/Aurora"; 
 
 import "./App.css";
 
 function App() {
+    const location = useLocation();
+  
+  // Check if the current URL starts with "/admin"
+  const isAdmin = location.pathname.startsWith("/admin");
   return (
     <div className="app-container">
  
@@ -31,6 +35,9 @@ function App() {
       />
 
       <Routes>
+
+        <Route path="/admin" element={<Login />} />
+        <Route path="/admin/dashboard" element={<Dashboard />} />
 
         <Route
           path="/"
@@ -91,11 +98,15 @@ function App() {
       </Routes>
 
 
-      <API />
-      <CatSurprise />
+      {/* Only show these on public pages, HIDE them on Admin Dashboard */}
+      {!isAdmin && (
+        <>
+          <API />
+          <CatSurprise />
+        </>
+      )}
   
     </div>
   );
 }
-
 export default App;
