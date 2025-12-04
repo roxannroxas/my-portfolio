@@ -1,55 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./SkillsPage.css";
 import ElectricBorder from "../ElectricBorder/ElectricBorder";
-import {
-  FaReact,
-  FaPhp,
-  FaPython,
-  FaJava,
-  FaGamepad,
-  FaNetworkWired,
-  FaGitAlt,
-} from "react-icons/fa";
+import { supabase } from "../supabaseClient";
+import { FaCode } from "react-icons/fa"; // Default icon
 
-const SkillCard = ({ icon, category, skills }) => (
-  <ElectricBorder 
-    color="#bd73ff" 
-    thickness={2} 
-    className="skill-card-wrapper"
-    style={{ borderRadius: "12px" }}
-  >
+const SkillCard = ({ category, skills }) => (
+  <ElectricBorder color="#bd73ff" thickness={2} className="skill-card-wrapper" style={{ borderRadius: "12px" }}>
     <div className="skill-card-inner">
-      <div className="skill-icon">{icon}</div>
+      <div className="skill-icon"><FaCode /></div>
       <h3>{category}</h3>
       <ul>
-        {skills.map((skill, index) => (
-          <li key={index}>{skill}</li>
-        ))}
+        {skills.map((skill, index) => <li key={index}>{skill.trim()}</li>)}
       </ul>
     </div>
   </ElectricBorder>
 );
 
-const SkillsPage = () => {
-  const skillData = [
-    { icon: <FaPhp />, category: "Programming", skills: ["JavaScript", "PHP", "Python", "Java"] },
-    { icon: <FaReact />, category: "Web Development", skills: ["React", "HTML", "CSS", "MySQL", "WordPress"] },
-    { icon: <FaNetworkWired />, category: "Networking & Security", skills: ["Cisco Packet Tracer", "Routing", "VLANs"] },
-    { icon: <FaGamepad />, category: "Game Development", skills: ["Godot Engine"] },
-    { icon: <FaPython />, category: "Python Tools", skills: ["PyCharm", "OpenCV"] },
-    { icon: <FaGitAlt />, category: "Tools", skills: ["Git", "VS Code", "Node.js", "NetBeans"] },
-  ];
+const Skills = () => {
+  const [skillData, setSkillData] = useState([]);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      let { data } = await supabase.from('skill_categories').select('*').order('id');
+      if (data) {
+        // Convert the database string "React, JS" into array ["React", "JS"]
+        const formattedData = data.map(item => ({
+          category: item.category_name,
+          skills: item.skills_list ? item.skills_list.split(',') : []
+        }));
+        setSkillData(formattedData);
+      }
+    };
+    fetchSkills();
+  }, []);
 
   return (
     <section className="skills-section">
       <h2 className="section-title">My Skills</h2>
       <div className="skills-grid">
-        {skillData.map((item, index) => (
-          <SkillCard key={index} {...item} />
-        ))}
+        {skillData.map((item, index) => <SkillCard key={index} {...item} />)}
       </div>
     </section>
   );
 };
 
-export default SkillsPage;
+export default Skills;

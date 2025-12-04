@@ -260,92 +260,125 @@ const SkillsManager = () => {
 
 
 
+// ==========================================
+// 3. ABOUT & CONTENT MANAGER
+// ==========================================
 const AboutManager = () => {
+  // Education & Achievements
   const [education, setEducation] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [newEdu, setNewEdu] = useState({ school: "", detail: "", awards: "" });
   const [newAch, setNewAch] = useState("");
-  const [bio, setBio] = useState("");
+  
+  // Site Text (Bio, Header, Home-About)
+  const [texts, setTexts] = useState({
+    bio: "",
+    header_title: "",
+    header_subtitle: "",
+    about_summary: ""
+  });
 
   const fetchData = async () => {
     const eduReq = supabase.from('education').select('*');
     const achReq = supabase.from('achievements').select('*');
-    const bioReq = supabase.from('site_content').select('*').eq('section_key', 'bio').single();
+    const contentReq = supabase.from('site_content').select('*');
 
-    const [eduRes, achRes, bioRes] = await Promise.all([eduReq, achReq, bioReq]);
+    const [eduRes, achRes, contentRes] = await Promise.all([eduReq, achReq, contentReq]);
     
     if (eduRes.data) setEducation(eduRes.data);
     if (achRes.data) setAchievements(achRes.data);
-    if (bioRes.data) setBio(bioRes.data.content_text);
+    
+    if (contentRes.data) {
+      const newTexts = { ...texts };
+      contentRes.data.forEach(item => {
+        if (newTexts.hasOwnProperty(item.section_key)) {
+          newTexts[item.section_key] = item.content_text;
+        }
+      });
+      setTexts(newTexts);
+    }
   };
 
   useEffect(() => { fetchData(); }, []);
 
-  const saveBio = async () => {
-    await supabase.from('site_content').upsert({ section_key: 'bio', content_text: bio }, { onConflict: 'section_key' });
-    alert("Bio updated!");
+  // Generic Text Saver
+  const saveText = async (key, value) => {
+    await supabase.from('site_content').upsert({ section_key: key, content_text: value }, { onConflict: 'section_key' });
+    alert(`${key.replace('_', ' ')} updated!`);
   };
 
-  const addEdu = async () => {
-    await supabase.from('education').insert(newEdu);
-    setNewEdu({ school: "", detail: "", awards: "" }); fetchData();
-  };
+  const addEdu = async () => { await supabase.from('education').insert(newEdu); setNewEdu({ school: "", detail: "", awards: "" }); fetchData(); };
   const deleteEdu = async (id) => { await supabase.from('education').delete().eq('id', id); fetchData(); };
-
-  const addAch = async () => {
-    await supabase.from('achievements').insert({ title: newAch });
-    setNewAch(""); fetchData();
-  };
+  const addAch = async () => { await supabase.from('achievements').insert({ title: newAch }); setNewAch(""); fetchData(); };
   const deleteAch = async (id) => { await supabase.from('achievements').delete().eq('id', id); fetchData(); };
 
   return (
     <div style={styles.fadeIn}>
+      
+      {/* HEADER SECTION */}
       <div style={styles.card}>
-        <h4>Edit About Me Bio</h4>
-        <textarea rows="4" value={bio} onChange={e => setBio(e.target.value)} style={styles.input} />
-        <button onClick={saveBio} style={{...styles.primaryBtn, marginTop: '10px'}}>Save Bio</button>
+        <h4>Edit Home Page Header</h4>
+        <label style={{color:"#ccc", fontSize:"0.9rem"}}>Main Title (Your Name)</label>
+        <input value={texts.header_title} onChange={e => setTexts({...texts, header_title: e.target.value})} style={{...styles.input, marginBottom: "10px"}} />
+        
+        <label style={{color:"#ccc", fontSize:"0.9rem"}}>Subtitle (Job Title)</label>
+        <input value={texts.header_subtitle} onChange={e => setTexts({...texts, header_subtitle: e.target.value})} style={styles.input} />
+        
+        <div style={{marginTop: "10px", display:"flex", gap:"10px"}}>
+          <button onClick={() => saveText('header_title', texts.header_title)} style={styles.primaryBtn}>Save Title</button>
+          <button onClick={() => saveText('header_subtitle', texts.header_subtitle)} style={styles.primaryBtn}>Save Subtitle</button>
+        </div>
       </div>
 
+      {/* HOME ABOUT SECTION */}
+      <div style={styles.card}>
+        <h4>Edit Home Page "About" Summary</h4>
+        <textarea rows="3" value={texts.about_summary} onChange={e => setTexts({...texts, about_summary: e.target.value})} style={styles.input} />
+        <button onClick={() => saveText('about_summary', texts.about_summary)} style={{...styles.primaryBtn, marginTop: '10px'}}>Save Summary</button>
+      </div>
+
+      {/* DETAILED BIO SECTION */}
+      <div style={styles.card}>
+        <h4>Edit "About Me" Page Bio</h4>
+        <textarea rows="5" value={texts.bio} onChange={e => setTexts({...texts, bio: e.target.value})} style={styles.input} />
+        <button onClick={() => saveText('bio', texts.bio)} style={{...styles.primaryBtn, marginTop: '10px'}}>Save Bio</button>
+      </div>
+
+      {/* EDUCATION SECTION */}
       <div style={styles.card}>
         <h4>Education</h4>
         <div style={{display: 'flex', gap: '10px', marginBottom: '10px'}}>
           <input placeholder="School" value={newEdu.school} onChange={e => setNewEdu({...newEdu, school: e.target.value})} style={styles.input} />
-          <input placeholder="Detail (Year/Course)" value={newEdu.detail} onChange={e => setNewEdu({...newEdu, detail: e.target.value})} style={styles.input} />
+          <input placeholder="Detail" value={newEdu.detail} onChange={e => setNewEdu({...newEdu, detail: e.target.value})} style={styles.input} />
         </div>
-        <input placeholder="Awards (e.g. With Honors)" value={newEdu.awards} onChange={e => setNewEdu({...newEdu, awards: e.target.value})} style={{...styles.input, marginBottom:'10px'}} />
-        <button onClick={addEdu} style={styles.primaryBtn}><FaPlus /> Add Education</button>
-        
+        <input placeholder="Awards" value={newEdu.awards} onChange={e => setNewEdu({...newEdu, awards: e.target.value})} style={{...styles.input, marginBottom:'10px'}} />
+        <button onClick={addEdu} style={styles.primaryBtn}><FaPlus /> Add</button>
         <div style={{marginTop: '20px'}}>
           {education.map(edu => (
             <div key={edu.id} style={styles.miniCard}>
-              <div>
-                <strong>{edu.school}</strong> <br/> <span style={{fontSize:'0.8rem'}}>{edu.detail}</span>
-              </div>
+              <div><strong>{edu.school}</strong><br/><span style={{fontSize:'0.8rem'}}>{edu.detail}</span></div>
               <button onClick={() => deleteEdu(edu.id)} style={styles.iconBtn}><FaTrash /></button>
             </div>
           ))}
         </div>
       </div>
 
+      {/* ACHIEVEMENTS */}
       <div style={styles.card}>
-        <h4>Achievements & Certifications</h4>
+        <h4>Achievements</h4>
         <div style={{display: 'flex', gap: '10px'}}>
-          <input placeholder="Achievement Title" value={newAch} onChange={e => setNewAch(e.target.value)} style={styles.input} />
+          <input placeholder="Achievement" value={newAch} onChange={e => setNewAch(e.target.value)} style={styles.input} />
           <button onClick={addAch} style={styles.primaryBtn}>Add</button>
         </div>
         <div style={{marginTop: '15px'}}>
           {achievements.map(ach => (
-             <div key={ach.id} style={styles.miniCard}>
-             <span>{ach.title}</span>
-             <button onClick={() => deleteAch(ach.id)} style={styles.iconBtn}><FaTrash /></button>
-           </div>
+             <div key={ach.id} style={styles.miniCard}><span>{ach.title}</span><button onClick={() => deleteAch(ach.id)} style={styles.iconBtn}><FaTrash /></button></div>
           ))}
         </div>
       </div>
     </div>
   );
 };
-
 
 const ContactManager = () => {
   const [details, setDetails] = useState({
