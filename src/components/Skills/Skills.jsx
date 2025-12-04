@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Skills.css";
 import ElectricBorder from "../ElectricBorder/ElectricBorder";
 import { supabase } from "../supabaseClient";
-import { FaCode } from "react-icons/fa"; // Default icon
+import { FaCode } from "react-icons/fa"; 
 
 const SkillCard = ({ category, skills }) => (
   <ElectricBorder color="#bd73ff" thickness={2} className="skill-card-wrapper" style={{ borderRadius: "12px" }}>
@@ -23,7 +23,7 @@ const Skills = () => {
     const fetchSkills = async () => {
       let { data } = await supabase.from('skill_categories').select('*').order('id');
       if (data) {
-        // Convert the database string "React, JS" into array ["React", "JS"]
+      
         const formattedData = data.map(item => ({
           category: item.category_name,
           skills: item.skills_list ? item.skills_list.split(',') : []

@@ -260,17 +260,11 @@ const SkillsManager = () => {
 
 
 
-// ==========================================
-// 3. ABOUT & CONTENT MANAGER
-// ==========================================
-const AboutManager = () => {
-  // Education & Achievements
-  const [education, setEducation] = useState([]);
+const AboutManager = () => {  const [education, setEducation] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [newEdu, setNewEdu] = useState({ school: "", detail: "", awards: "" });
   const [newAch, setNewAch] = useState("");
-  
-  // Site Text (Bio, Header, Home-About)
+
   const [texts, setTexts] = useState({
     bio: "",
     header_title: "",
@@ -301,7 +295,7 @@ const AboutManager = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  // Generic Text Saver
+
   const saveText = async (key, value) => {
     await supabase.from('site_content').upsert({ section_key: key, content_text: value }, { onConflict: 'section_key' });
     alert(`${key.replace('_', ' ')} updated!`);
@@ -315,7 +309,7 @@ const AboutManager = () => {
   return (
     <div style={styles.fadeIn}>
       
-      {/* HEADER SECTION */}
+   
       <div style={styles.card}>
         <h4>Edit Home Page Header</h4>
         <label style={{color:"#ccc", fontSize:"0.9rem"}}>Main Title (Your Name)</label>
@@ -330,21 +324,21 @@ const AboutManager = () => {
         </div>
       </div>
 
-      {/* HOME ABOUT SECTION */}
+
       <div style={styles.card}>
         <h4>Edit Home Page "About" Summary</h4>
         <textarea rows="3" value={texts.about_summary} onChange={e => setTexts({...texts, about_summary: e.target.value})} style={styles.input} />
         <button onClick={() => saveText('about_summary', texts.about_summary)} style={{...styles.primaryBtn, marginTop: '10px'}}>Save Summary</button>
       </div>
 
-      {/* DETAILED BIO SECTION */}
+
       <div style={styles.card}>
         <h4>Edit "About Me" Page Bio</h4>
         <textarea rows="5" value={texts.bio} onChange={e => setTexts({...texts, bio: e.target.value})} style={styles.input} />
         <button onClick={() => saveText('bio', texts.bio)} style={{...styles.primaryBtn, marginTop: '10px'}}>Save Bio</button>
       </div>
 
-      {/* EDUCATION SECTION */}
+
       <div style={styles.card}>
         <h4>Education</h4>
         <div style={{display: 'flex', gap: '10px', marginBottom: '10px'}}>
@@ -363,7 +357,7 @@ const AboutManager = () => {
         </div>
       </div>
 
-      {/* ACHIEVEMENTS */}
+
       <div style={styles.card}>
         <h4>Achievements</h4>
         <div style={{display: 'flex', gap: '10px'}}>
