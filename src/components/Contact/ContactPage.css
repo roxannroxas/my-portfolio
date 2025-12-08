@@ -12,7 +12,7 @@
   align-items: center;
   padding: 120px 20px 50px;
   font-family: 'Segoe UI', sans-serif;
-  background: radial-gradient(circle at top right, #2d0b45 0%, #000000 100%);
+  background: transparent !important;
 }
 
 .contact-container {
