@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import { FaProjectDiagram, FaUser, FaCode, FaAddressBook, FaSignOutAlt, FaTrash, FaPlus } from "react-icons/fa";
+import { FaProjectDiagram, FaUser, FaCode, FaAddressBook, FaSignOutAlt, FaTrash, FaPlus, FaEdit } from "react-icons/fa";
 
 
 const Dashboard = () => {
@@ -18,7 +18,7 @@ const Dashboard = () => {
     checkUser();
   }, [navigate]);
 
-  const handleLogout = async () => {
+  const handleLogout = async () => {  
     await supabase.auth.signOut();
     navigate("/admin");
   };
@@ -260,10 +260,16 @@ const SkillsManager = () => {
 
 
 
-const AboutManager = () => {  const [education, setEducation] = useState([]);
+
+const AboutManager = () => {  
+ 
+  const [education, setEducation] = useState([]);
   const [achievements, setAchievements] = useState([]);
+  
+
   const [newEdu, setNewEdu] = useState({ school: "", detail: "", awards: "" });
   const [newAch, setNewAch] = useState("");
+  
 
   const [texts, setTexts] = useState({
     bio: "",
@@ -272,9 +278,13 @@ const AboutManager = () => {  const [education, setEducation] = useState([]);
     about_summary: ""
   });
 
+
+  const [editingEduId, setEditingEduId] = useState(null); 
+
+ 
   const fetchData = async () => {
-    const eduReq = supabase.from('education').select('*');
-    const achReq = supabase.from('achievements').select('*');
+    const eduReq = supabase.from('education').select('*').order('id', { ascending: false });
+    const achReq = supabase.from('achievements').select('*').order('id', { ascending: true });
     const contentReq = supabase.from('site_content').select('*');
 
     const [eduRes, achRes, contentRes] = await Promise.all([eduReq, achReq, contentReq]);
@@ -295,21 +305,70 @@ const AboutManager = () => {  const [education, setEducation] = useState([]);
 
   useEffect(() => { fetchData(); }, []);
 
-
+  
   const saveText = async (key, value) => {
     await supabase.from('site_content').upsert({ section_key: key, content_text: value }, { onConflict: 'section_key' });
     alert(`${key.replace('_', ' ')} updated!`);
   };
 
-  const addEdu = async () => { await supabase.from('education').insert(newEdu); setNewEdu({ school: "", detail: "", awards: "" }); fetchData(); };
-  const deleteEdu = async (id) => { await supabase.from('education').delete().eq('id', id); fetchData(); };
+
+  const handleEditEdu = (item) => {
+    setEditingEduId(item.id);
+    setNewEdu({ 
+      school: item.school, 
+      detail: item.detail, 
+      awards: item.awards || "" 
+    });
+  };
+
+
+  const handleCancelEdu = () => {
+    setEditingEduId(null);
+    setNewEdu({ school: "", detail: "", awards: "" });
+  };
+
+
+  const handleSaveEdu = async () => {
+    if (!newEdu.school || !newEdu.detail) return alert("School and Detail are required!");
+
+    if (editingEduId) {
+    
+      const { error } = await supabase
+        .from('education')
+        .update(newEdu)
+        .eq('id', editingEduId);
+
+      if (!error) alert("Education Updated!");
+    } else {
+ 
+      const { error } = await supabase
+        .from('education')
+        .insert(newEdu);
+
+      if (!error) alert("Education Added!");
+    }
+    
+ 
+    handleCancelEdu();
+    fetchData();
+  };
+
+
+  const deleteEdu = async (id) => { 
+    if(window.confirm("Delete this education entry?")) {
+      await supabase.from('education').delete().eq('id', id); 
+      fetchData(); 
+    }
+  };
+
+ 
   const addAch = async () => { await supabase.from('achievements').insert({ title: newAch }); setNewAch(""); fetchData(); };
   const deleteAch = async (id) => { await supabase.from('achievements').delete().eq('id', id); fetchData(); };
 
   return (
     <div style={styles.fadeIn}>
       
-   
+
       <div style={styles.card}>
         <h4>Edit Home Page Header</h4>
         <label style={{color:"#ccc", fontSize:"0.9rem"}}>Main Title (Your Name)</label>
@@ -324,39 +383,66 @@ const AboutManager = () => {  const [education, setEducation] = useState([]);
         </div>
       </div>
 
-
+  
       <div style={styles.card}>
         <h4>Edit Home Page "About" Summary</h4>
         <textarea rows="3" value={texts.about_summary} onChange={e => setTexts({...texts, about_summary: e.target.value})} style={styles.input} />
         <button onClick={() => saveText('about_summary', texts.about_summary)} style={{...styles.primaryBtn, marginTop: '10px'}}>Save Summary</button>
       </div>
 
-
+  
       <div style={styles.card}>
         <h4>Edit "About Me" Page Bio</h4>
         <textarea rows="5" value={texts.bio} onChange={e => setTexts({...texts, bio: e.target.value})} style={styles.input} />
         <button onClick={() => saveText('bio', texts.bio)} style={{...styles.primaryBtn, marginTop: '10px'}}>Save Bio</button>
       </div>
 
-
       <div style={styles.card}>
-        <h4>Education</h4>
+        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px"}}>
+           <h4 style={{margin: 0}}>Education</h4>
+           {editingEduId && (
+             <button onClick={handleCancelEdu} style={{background: "gray", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer", fontSize: "0.8rem"}}>
+               Cancel Edit
+             </button>
+           )}
+        </div>
+
         <div style={{display: 'flex', gap: '10px', marginBottom: '10px'}}>
           <input placeholder="School" value={newEdu.school} onChange={e => setNewEdu({...newEdu, school: e.target.value})} style={styles.input} />
-          <input placeholder="Detail" value={newEdu.detail} onChange={e => setNewEdu({...newEdu, detail: e.target.value})} style={styles.input} />
+          <input placeholder="Detail (Year/Course)" value={newEdu.detail} onChange={e => setNewEdu({...newEdu, detail: e.target.value})} style={styles.input} />
         </div>
-        <input placeholder="Awards" value={newEdu.awards} onChange={e => setNewEdu({...newEdu, awards: e.target.value})} style={{...styles.input, marginBottom:'10px'}} />
-        <button onClick={addEdu} style={styles.primaryBtn}><FaPlus /> Add</button>
+        <input placeholder="Awards (e.g. With Honors)" value={newEdu.awards} onChange={e => setNewEdu({...newEdu, awards: e.target.value})} style={{...styles.input, marginBottom:'10px'}} />
+   
+        <button 
+          onClick={handleSaveEdu} 
+          style={editingEduId ? styles.updateBtn : styles.primaryBtn}
+        >
+          {editingEduId ? "Update Education" : <span><FaPlus /> Add Education</span>}
+        </button>
+        
         <div style={{marginTop: '20px'}}>
           {education.map(edu => (
             <div key={edu.id} style={styles.miniCard}>
-              <div><strong>{edu.school}</strong><br/><span style={{fontSize:'0.8rem'}}>{edu.detail}</span></div>
-              <button onClick={() => deleteEdu(edu.id)} style={styles.iconBtn}><FaTrash /></button>
+              <div style={{flex: 1}}>
+                <strong style={{color: "white"}}>{edu.school}</strong><br/>
+                <span style={{fontSize:'0.8rem', color: "#ccc"}}>{edu.detail}</span>
+                {edu.awards && <div style={{fontSize:'0.8rem', color: "#bd73ff", marginTop: "2px"}}>🏆 {edu.awards}</div>}
+              </div>
+              
+              <div style={{display: "flex", gap: "10px", alignItems: "center"}}>
+                {/* EDIT ICON */}
+                <button onClick={() => handleEditEdu(edu)} style={{...styles.iconBtn, color: "#3498db"}} title="Edit">
+                  <FaEdit />
+                </button>
+                {/* DELETE ICON */}
+                <button onClick={() => deleteEdu(edu.id)} style={styles.iconBtn} title="Delete">
+                  <FaTrash />
+                </button>
+              </div>
             </div>
           ))}
         </div>
       </div>
-
 
       <div style={styles.card}>
         <h4>Achievements</h4>
@@ -366,14 +452,16 @@ const AboutManager = () => {  const [education, setEducation] = useState([]);
         </div>
         <div style={{marginTop: '15px'}}>
           {achievements.map(ach => (
-             <div key={ach.id} style={styles.miniCard}><span>{ach.title}</span><button onClick={() => deleteAch(ach.id)} style={styles.iconBtn}><FaTrash /></button></div>
+             <div key={ach.id} style={styles.miniCard}>
+               <span>{ach.title}</span>
+               <button onClick={() => deleteAch(ach.id)} style={styles.iconBtn}><FaTrash /></button>
+             </div>
           ))}
         </div>
       </div>
     </div>
   );
 };
-
 const ContactManager = () => {
   const [details, setDetails] = useState({
     email: "", phone: "", address: "", linkedin: "", github: "", facebook: ""

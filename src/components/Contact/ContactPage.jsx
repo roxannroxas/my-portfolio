@@ -1,133 +1,145 @@
 import React, { useState, useEffect, useRef } from "react";
 import emailjs from "emailjs-com";
+import { supabase } from "../supabaseClient";
 import "./ContactPage.css";
-import { FaEnvelope, FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
+import { 
+  FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, 
+  FaLinkedin, FaGithub, FaFacebook, FaUser, FaPen, FaPaperPlane 
+} from "react-icons/fa";
 
 const ContactPage = () => {
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [emails, setEmails] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [formStatus, setFormStatus] = useState("");
-  const [isClosing, setIsClosing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
   const form = useRef();
 
+  const [contactInfo, setContactInfo] = useState({
+    email: "Loading...",
+    phone: "Loading...",
+    address: "Loading...",
+    linkedin: "#",
+    github: "#",
+    facebook: "#"
+  });
+
   useEffect(() => {
-    const fetchEmails = async () => {
-      setTimeout(() => {
-        const mockEmails = [
-          { id: 1, subject: "Welcome to Gmail!", sender: "Google" },
-          { id: 2, subject: "Project Update - API", sender: "Angel Galang" },
-        ];
-        setEmails(mockEmails);
-        setUnreadCount(mockEmails.length);
-      }, 1000);
+    const fetchData = async () => {
+      const { data } = await supabase.from('site_content').select('*');
+      if (data) {
+        const newInfo = { ...contactInfo };
+        data.forEach(item => {
+          if (newInfo.hasOwnProperty(item.section_key)) {
+            newInfo[item.section_key] = item.content_text;
+          }
+        });
+        setContactInfo(newInfo);
+      }
     };
-    fetchEmails();
+    fetchData();
   }, []);
 
   const sendEmail = (e) => {
     e.preventDefault();
-    setFormStatus("Sending...");
+    setLoading(true);
+    setStatus("");
 
     emailjs
       .sendForm(
-        "service_a68fwe3", 
+        "service_a68fwe3",  
         "template_kpic359", 
         form.current,
         "ILJx2OdUM_cafwinA" 
       )
       .then(
         () => {
-          setFormStatus("✅ Message sent successfully!");
-          e.target.reset();
-          setTimeout(() => handleClose(), 1500);
+          setLoading(false);
+          setStatus("success");
+          form.current.reset();
+          setTimeout(() => setStatus(""), 5000);
         },
         (error) => {
-          console.error("Email send error:", error);
-          setFormStatus("❌ Failed to send message. Try again later.");
+          console.error("Email error:", error);
+          setLoading(false);
+          setStatus("error");
         }
       );
   };
 
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setShowForm(false);
-      setIsClosing(false);
-      setFormStatus("");
-    }, 300); 
-  };
-
   return (
-    <section className="contact-page">
+    <section className="contact-hero">
       <div className="contact-container">
-        <h2 className="contact-title">Get in Touch</h2>
-        <p className="contact-subtitle">
-          I'd love to hear from you! Feel free to reach out through any of the platforms below:
-        </p>
+        
 
-        <ul className="contact-list">
-          <li className="contact-item">
-            <div
-              className="gmail-notification"
-              onClick={() => setShowForm(true)}
-            >
-              <FaEnvelope className="contact-icon gmail-icon" />
-              {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
-            </div>
-            <a href="#" onClick={(e) => { e.preventDefault(); setShowForm(true); }}>
-              roxanne.roxas@email.lcup.edu.ph
-            </a>
-          </li>
+        <div className="contact-info-card">
+          <div className="contact-header">
+            <h2>Get in Touch</h2>
+            <p>
+              I'd love to hear from you! Whether you have a project idea, 
+              a question, or just want to say hi, feel free to drop a message.
+            </p>
+          </div>
 
-          <li>
-            <FaLinkedin className="contact-icon" />
-            <a
-              href="https://www.linkedin.com/in/roxanne-roxas-758977382/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              LinkedIn Profile
-            </a>
-          </li>
+          <ul className="contact-details">
+            <li>
+              <div className="icon-box"><FaEnvelope /></div>
+              <span>{contactInfo.email}</span>
+            </li>
+            <li>
+              <div className="icon-box"><FaPhoneAlt /></div>
+              <span>{contactInfo.phone}</span>
+            </li>
+            <li>
+              <div className="icon-box"><FaMapMarkerAlt /></div>
+              <span>{contactInfo.address}</span>
+            </li>
+          </ul>
 
-          <li>
-            <FaGithub className="contact-icon" />
-            <a href="https://github.com/roxannroxas" target="_blank" rel="noreferrer">
-              GitHub Profile
-            </a>
-          </li>
-
-          <li>
-            <FaFacebook className="contact-icon" />
-            <a href="https://www.facebook.com/rxsroxanne17" target="_blank" rel="noreferrer">
-              Facebook Profile
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      {showForm && (
-        <div
-          className={`popup-overlay ${isClosing ? "hide" : ""}`}
-          onClick={handleClose}
-        >
-          <div className="popup-container" onClick={(e) => e.stopPropagation()}>
-            <h3>📩 Send a Message</h3>
-            <form ref={form} onSubmit={sendEmail} className="contact-form">
-              <input type="text" name="name" placeholder="Your Name" required />
-              <input type="email" name="email" placeholder="Your Email" required />
-              <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
-              <button type="submit">Send Message</button>
-              {formStatus && <p className="form-status">{formStatus}</p>}
-            </form>
-
-            <button className="close-btn" onClick={handleClose}>
-              ✖ Close
-            </button>
+          <div className="social-links">
+            <a href={contactInfo.linkedin} target="_blank" rel="noreferrer" className="social-btn"><FaLinkedin /></a>
+            <a href={contactInfo.github} target="_blank" rel="noreferrer" className="social-btn"><FaGithub /></a>
+            <a href={contactInfo.facebook} target="_blank" rel="noreferrer" className="social-btn"><FaFacebook /></a>
           </div>
         </div>
-      )}
+
+
+        <div className="contact-form-wrapper">
+          <h3>Send a Message</h3>
+          
+          <form ref={form} onSubmit={sendEmail}>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <input type="text" name="name" className="form-input" placeholder="Your Name" required />
+                <FaUser className="form-icon" />
+              </div>
+
+              <div className="form-group">
+                <input type="email" name="email" className="form-input" placeholder="Your Email" required />
+                <FaEnvelope className="form-icon" />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <input type="text" name="title" className="form-input" placeholder="Subject" required />
+              <FaPen className="form-icon" />
+            </div>
+
+            <div className="form-group">
+              <textarea name="message" className="form-textarea" placeholder="Your Message..." required></textarea>
+
+              <div className="form-icon" style={{top: "18px"}}><FaPaperPlane /></div>
+            </div>
+
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? "Sending..." : "Send Message"}
+            </button>
+
+            {status === "success" && <div className="status-msg success">✅ Message sent successfully!</div>}
+            {status === "error" && <div className="status-msg error">❌ Failed to send. Please try again.</div>}
+
+          </form>
+        </div>
+
+      </div>
     </section>
   );
 };

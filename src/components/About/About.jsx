@@ -19,7 +19,7 @@ const About = () => {
         const { data, error } = await supabase
           .from("site_content")
           .select("content_text")
-          .eq("section_key", "bio") 
+          .eq("section_key", "about_summary") 
           .single();
 
         if (data) setText(data.content_text);
