@@ -15,16 +15,17 @@ const About = () => {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-       
         const { data, error } = await supabase
           .from("site_content")
           .select("content_text")
-          .eq("section_key", "about_summary") 
+          .eq("section_key", "bio") // <--- CHANGED FROM 'about_summary' TO 'bio'
           .single();
 
-        if (data) setText(data.content_text);
+        if (data) {
+          setText(data.content_text);
+        }
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching about content:", error);
       } finally {
         setLoading(false);
       }
@@ -38,10 +39,17 @@ const About = () => {
       <div className="about-box">
         <h2 className="section-title">Who Am I?</h2>
         
-        {loading ? <p>Loading...</p> : (
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
           <div className="bio-text">
-            {text.split("\n").map((p, i) => (
-              p.trim() !== "" ? <p key={i}>{p}</p> : <br key={i}/>
+            {/* This logic correctly handles the paragraphs from your SQL insert */}
+            {text.split("\n").map((paragraph, index) => (
+              paragraph.trim() !== "" && (
+                <p key={index} style={{ marginBottom: "1rem" }}>
+                  {paragraph}
+                </p>
+              )
             ))}
           </div>
         )}
