@@ -3,9 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { FaProjectDiagram, FaUser, FaCode, FaAddressBook, FaSignOutAlt, FaTrash, FaPlus, FaEdit, FaCube } from "react-icons/fa";
 
-// ==========================================
-// MAIN DASHBOARD LAYOUT
-// ==========================================
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -29,9 +27,9 @@ const Dashboard = () => {
 
   return (
     <div style={styles.container}>
-      {/* SIDEBAR */}
+    
       <div style={styles.sidebar}>
-        <h2 style={styles.logo}>Kirby<span style={{color:"#bd73ff"}}>.</span></h2>
+        <h2 style={styles.logo}>Kirby's Panel<span style={{color:"#bd73ff"}}>.</span></h2>
         <nav style={styles.nav}>
           <NavButton label="Projects" icon={<FaProjectDiagram />} tab="projects" active={activeTab} set={setActiveTab} />
           <NavButton label="Skills" icon={<FaCode />} tab="skills" active={activeTab} set={setActiveTab} />
@@ -41,7 +39,7 @@ const Dashboard = () => {
         <button onClick={handleLogout} style={styles.logoutBtn}><FaSignOutAlt /> Logout</button>
       </div>
 
-      {/* MAIN CONTENT AREA */}
+    
       <div style={styles.mainContent}>
         <h2 style={styles.header}>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Manager</h2>
         {activeTab === "projects" && <ProjectsManager />}
@@ -53,9 +51,7 @@ const Dashboard = () => {
   );
 };
 
-// ==========================================
-// 1. PROJECTS MANAGER
-// ==========================================
+
 const ProjectsManager = () => {
   const [projects, setProjects] = useState([]);
   const [form, setForm] = useState({ title: "", tech: "", desc: "" });
@@ -167,14 +163,10 @@ const ProjectsManager = () => {
   );
 };
 
-// ==========================================
-// 2. SKILLS MANAGER (Editable & Styled)
-// ==========================================
 const SkillsManager = () => {
   const [categories, setCategories] = useState([]);
   const [newCat, setNewCat] = useState({ category_name: "", skills_list: "" });
-  const [editingSkillId, setEditingSkillId] = useState(null); // Track editing state
-
+  const [editingSkillId, setEditingSkillId] = useState(null); 
   const fetchSkills = async () => {
     let { data } = await supabase.from('skill_categories').select('*').order('id');
     if (data) setCategories(data);
@@ -182,35 +174,35 @@ const SkillsManager = () => {
 
   useEffect(() => { fetchSkills(); }, []);
 
-  // --- EDIT HANDLER ---
+
   const handleEditSkill = (item) => {
     setEditingSkillId(item.id);
     setNewCat({ 
       category_name: item.category_name, 
       skills_list: item.skills_list 
     });
-    // Scroll to form
+
     document.getElementById("skillForm").scrollIntoView({ behavior: 'smooth' });
   };
 
-  // --- CANCEL HANDLER ---
+
   const handleCancelSkill = () => {
     setEditingSkillId(null);
     setNewCat({ category_name: "", skills_list: "" });
   };
 
-  // --- SAVE (ADD OR UPDATE) ---
+
   const handleSaveSkill = async () => {
     if (!newCat.category_name) return alert("Category Name is required!");
 
     if (editingSkillId) {
-      // Update
+
       await supabase.from('skill_categories')
         .update(newCat)
         .eq('id', editingSkillId);
       alert("Skill Category Updated!");
     } else {
-      // Add
+
       await supabase.from('skill_categories').insert(newCat);
       alert("Skill Category Added!");
     }
@@ -219,7 +211,6 @@ const SkillsManager = () => {
     fetchSkills();
   };
 
-  // --- DELETE ---
   const handleDelete = async (id) => {
     if(window.confirm("Delete this category?")) {
       await supabase.from('skill_categories').delete().eq('id', id);
@@ -270,11 +261,11 @@ const SkillsManager = () => {
             </div>
             
             <div style={{display: "flex", gap: "10px", alignItems: "center"}}>
-                {/* EDIT ICON (Blue) */}
+           
                 <button onClick={() => handleEditSkill(cat)} style={styles.iconEdit} title="Edit">
                   <FaEdit />
                 </button>
-                {/* DELETE ICON (Red) */}
+            
                 <button onClick={() => handleDelete(cat.id)} style={styles.iconDelete} title="Delete">
                   <FaTrash />
                 </button>
@@ -286,9 +277,6 @@ const SkillsManager = () => {
   );
 };
 
-// ==========================================
-// 3. ABOUT MANAGER
-// ==========================================
 const AboutManager = () => {  
   const [education, setEducation] = useState([]);
   const [achievements, setAchievements] = useState([]);
@@ -407,9 +395,7 @@ const AboutManager = () => {
   );
 };
 
-// ==========================================
-// 4. CONTACT MANAGER
-// ==========================================
+
 const ContactManager = () => {
   const [details, setDetails] = useState({ email: "", phone: "", address: "", linkedin: "", github: "", facebook: "" });
 
@@ -448,9 +434,7 @@ const ContactManager = () => {
   );
 };
 
-// ==========================================
-// STYLES - THEME MATCHED TO WEBSITE
-// ==========================================
+
 const NavButton = ({ label, icon, tab, active, set }) => (
   <button onClick={() => set(tab)} style={active === tab ? styles.activeLink : styles.link}>
     <span style={{marginRight: "12px"}}>{icon}</span> {label}
@@ -458,7 +442,7 @@ const NavButton = ({ label, icon, tab, active, set }) => (
 );
 
 const styles = {
-  // Main Layout - Radial Gradient Background to match website
+
   container: { 
     display: "flex", 
     minHeight: "100vh", 
@@ -467,7 +451,7 @@ const styles = {
     fontFamily: "'Segoe UI', sans-serif" 
   },
   
-  // Sidebar - Glassmorphism
+
   sidebar: { 
     width: "260px", 
     background: "rgba(20, 20, 20, 0.6)", 
@@ -481,7 +465,7 @@ const styles = {
   mainContent: { flex: 1, padding: "40px 60px", overflowY: "auto" },
   logo: { marginBottom: "50px", color: "white", textAlign: "center", fontSize: "1.8rem", fontWeight: "800", letterSpacing: "1px" },
   
-  // Navigation
+ 
   nav: { display: "flex", flexDirection: "column", gap: "10px", flex: 1 },
   link: { 
     background: "transparent", border: "none", color: "#aaa", textAlign: "left", padding: "14px 20px", 
@@ -500,7 +484,7 @@ const styles = {
   
   header: { marginBottom: "30px", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "20px", color: "white", fontSize: "2rem" },
   
-  // Cards - Glassmorphism & Borders
+  
   card: { 
     background: "rgba(30, 30, 30, 0.6)", 
     backdropFilter: "blur(12px)",
@@ -510,8 +494,7 @@ const styles = {
     border: "1px solid rgba(138, 43, 226, 0.15)",
     boxShadow: "0 10px 30px rgba(0,0,0,0.3)"
   },
-  
-  // Inputs
+
   form: { display: "flex", flexDirection: "column", gap: "15px" },
   input: { 
     padding: "14px", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", 
@@ -522,7 +505,7 @@ const styles = {
   },
   label: { fontSize: "0.85rem", color: "#bd73ff", marginBottom: "5px", display: "block", fontWeight: "600" },
 
-  // Buttons
+
   primaryBtn: { 
     padding: "12px 25px", background: "linear-gradient(135deg, #8A2BE2 0%, #bd73ff 100%)", 
     color: "white", border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "bold", 
@@ -537,7 +520,7 @@ const styles = {
     borderRadius: "8px", cursor: "pointer", fontSize: "0.9rem" 
   },
 
-  // Grid & Items
+
   grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "25px" },
   
   itemCard: { 
@@ -556,7 +539,6 @@ const styles = {
   editBtn: { width: "100%", background: "rgba(52, 152, 219, 0.15)", color: "#3498db", border: "1px solid rgba(52, 152, 219, 0.3)", padding: "10px 0", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", textAlign: "center" },
   deleteBtn: { width: "100%", background: "rgba(255, 77, 77, 0.15)", color: "#ff4d4d", border: "1px solid rgba(255, 77, 77, 0.3)", padding: "10px 0", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", textAlign: "center" },
 
-  // Mini Cards (List items)
   miniCard: { 
     display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', 
     background: 'rgba(0,0,0,0.2)', marginBottom: '10px', borderRadius: '10px', border: "1px solid rgba(255,255,255,0.05)" 
