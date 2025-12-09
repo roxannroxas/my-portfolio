@@ -4,17 +4,16 @@ import { useEffect, useRef } from 'react';
 
 function roundRect(ctx, x, y, width, height, radius) {
   ctx.beginPath();
-  ctx.moveTo(x + radius.tl, y);
-  ctx.lineTo(x + width - radius.tr, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-  ctx.lineTo(x + width, y + height - radius.br);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
-  ctx.lineTo(x + radius.bl, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-  ctx.lineTo(x, y + radius.tl);
-  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
-  ctx.fill();
 }
 
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
@@ -44,36 +43,77 @@ function lerp(p1, p2, t) {
 
 function createCardTexture(gl, { title, tech, description }) {
   const canvas = document.createElement('canvas');
-  
-
-  const width = 1000;  
-  const height = 500;  
+  const width = 1024;  
+  const height = 512;  
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
 
-   const gradient = ctx.createLinearGradient(0, 0, 0, height);
-  gradient.addColorStop(0, '#d653f780'); 
-  gradient.addColorStop(1, '#05050580'); 
+
+  const gradient = ctx.createRadialGradient(width/2, height/2, 50, width/2, height/2, width);
+  gradient.addColorStop(0, 'rgba(40, 30, 50, 0.95)'); 
+  gradient.addColorStop(1, 'rgba(10, 10, 15, 0.98)'); 
   ctx.fillStyle = gradient;
-
-  roundRect(ctx, 0, 0, width, height, { tl: 0, tr: 0, bl: 40, br: 40 });
-
-
-  ctx.fillStyle = '#e018faff';
-  ctx.textAlign = 'center';
-  ctx.font = 'bold 60px Figtree, sans-serif'; 
-  ctx.fillText(title, width / 2, 110);
-
   
-  ctx.fillStyle = '#FF3366'; 
-  ctx.font = 'bold 40px Figtree, sans-serif';
-  ctx.fillText(tech, width / 2, 190);
+  roundRect(ctx, 10, 10, width - 20, height - 20, 30);
+  ctx.fill();
 
 
-  ctx.fillStyle = '#ffffffff';
-  ctx.font = '50px Figtree, sans-serif';
-  wrapText(ctx, description, width / 2, 280, width - 100, 45);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(138, 43, 226, 0.3)'; 
+  
+
+  ctx.beginPath();
+  ctx.moveTo(100, 40);
+  ctx.lineTo(width - 100, 40);
+  ctx.stroke();
+
+
+  ctx.beginPath();
+  ctx.moveTo(100, height - 40);
+  ctx.lineTo(width - 100, height - 40);
+  ctx.stroke();
+
+
+  ctx.lineWidth = 8;
+  ctx.strokeStyle = '#bd73ff'; 
+  ctx.lineCap = 'round';
+  const cornerSize = 50;
+  const padding = 15;
+
+
+  ctx.beginPath(); ctx.moveTo(padding, padding + cornerSize); 
+  ctx.lineTo(padding, padding); ctx.lineTo(padding + cornerSize, padding); ctx.stroke();
+
+  ctx.beginPath(); ctx.moveTo(width - padding, height - padding - cornerSize); 
+  ctx.lineTo(width - padding, height - padding); ctx.lineTo(width - padding - cornerSize, height - padding); ctx.stroke();
+
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ffffff'; 
+  ctx.font = '800 40px "Segoe UI", sans-serif'; 
+  ctx.shadowColor = "rgba(189, 115, 255, 0.6)";
+  ctx.shadowBlur = 30;
+  ctx.fillText(title.toUpperCase(), width / 2, 140);
+  ctx.shadowBlur = 0; 
+
+  const techWidth = ctx.measureText(tech).width + 60;
+  ctx.fillStyle = 'rgba(138, 43, 226, 0.15)';
+  roundRect(ctx, (width/2) - (techWidth/2), 180, techWidth, 60, 10);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(138, 43, 226, 0.5)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+
+  ctx.fillStyle = '#bd73ff';
+  ctx.font = '600 35px "Courier New", monospace';
+  ctx.fillText(tech, width / 2, 222);
+
+ 
+  ctx.fillStyle = '#d0d0d0';
+  ctx.font = '40px "Segoe UI", sans-serif';
+  wrapText(ctx, description, width / 2, 320, width - 160, 55);
 
   const texture = new Texture(gl, { generateMipmaps: false });
   texture.image = canvas;
@@ -126,16 +166,12 @@ class CardInfo {
 
     this.mesh = new Mesh(this.gl, { geometry, program });
     
-
-    const aspect = width / height;
-  
-    const boxHeight = this.plane.scale.y * 0.6; 
+    // Size adjustments
+    const boxHeight = this.plane.scale.y * 0.7; 
     const boxWidth = this.plane.scale.x; 
 
     this.mesh.scale.set(boxWidth, boxHeight, 1);
-    
-
-    this.mesh.position.y = -this.plane.scale.y * 0.5 - boxHeight * 0.5 + 0.02;
+    this.mesh.position.y = -this.plane.scale.y * 0.5 - boxHeight * 0.5 + 0.1;
     this.mesh.setParent(this.plane);
   }
 }
@@ -178,6 +214,8 @@ class Media {
         void main() {
           vUv = uv;
           vec3 p = position;
+          
+          // Smooth Wave Flow (No Glitch)
           p.z = (sin(p.x * 4.0 + uTime) * 1.5 + cos(p.y * 2.0 + uTime) * 1.5) * (0.1 + uSpeed * 0.5);
           gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
         }
@@ -188,6 +226,7 @@ class Media {
         uniform vec2 uPlaneSizes;
         uniform sampler2D tMap;
         uniform float uBorderRadius;
+        uniform float uSpeed;
         varying vec2 vUv;
         
         float roundedBoxSDF(vec2 p, vec2 b, float r) {
@@ -204,11 +243,21 @@ class Media {
             vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
             vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
           );
-          vec4 color = texture2D(tMap, uv);
+
+          // --- CLEAN RGB SHIFT (Only on Scroll) ---
+          // This keeps the image sharp when still, but adds motion blur when moving
+          float shift = uSpeed * 0.01; 
+          float r = texture2D(tMap, uv + vec2(shift, 0.0)).r;
+          float g = texture2D(tMap, uv).g;
+          float b = texture2D(tMap, uv - vec2(shift, 0.0)).b;
+          vec3 color = vec3(r, g, b);
+
+          // Apply Rounded Corners
           float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
           float edgeSmooth = 0.002;
           float alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
-          gl_FragColor = vec4(color.rgb, alpha);
+          
+          gl_FragColor = vec4(color, alpha);
         }
       `,
       uniforms: {
@@ -295,7 +344,6 @@ class Media {
     }
     this.scale = this.screen.height / 1500;
     
-   
     this.plane.scale.x = (this.viewport.width * (900 * this.scale)) / this.screen.width;
     this.plane.scale.y = (this.viewport.height * (550 * this.scale)) / this.screen.height;
     

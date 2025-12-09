@@ -18,7 +18,7 @@ const About = () => {
         const { data, error } = await supabase
           .from("site_content")
           .select("content_text")
-          .eq("section_key", "bio") // <--- CHANGED FROM 'about_summary' TO 'bio'
+          .eq("section_key", "bio") 
           .single();
 
         if (data) {
@@ -43,7 +43,7 @@ const About = () => {
           <p>Loading...</p>
         ) : (
           <div className="bio-text">
-            {/* This logic correctly handles the paragraphs from your SQL insert */}
+         
             {text.split("\n").map((paragraph, index) => (
               paragraph.trim() !== "" && (
                 <p key={index} style={{ marginBottom: "1rem" }}>

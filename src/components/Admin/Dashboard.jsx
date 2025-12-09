@@ -52,6 +52,7 @@ const Dashboard = () => {
 };
 
 
+
 const ProjectsManager = () => {
   const [projects, setProjects] = useState([]);
   const [form, setForm] = useState({ title: "", tech: "", desc: "" });
@@ -60,17 +61,28 @@ const ProjectsManager = () => {
   const [editingId, setEditingId] = useState(null); 
   const [oldImageUrl, setOldImageUrl] = useState(""); 
 
+
   const fetchProjects = async () => {
-    let { data } = await supabase.from('projects').select('*').order('id', { ascending: false });
-    if (data) setProjects(data);
+    let { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .order('id', { ascending: false });
+      
+    if (error) console.error("Error fetching projects:", error);
+    else setProjects(data);
   };
 
   useEffect(() => { fetchProjects(); }, []);
 
+
   const handleEditClick = (project) => {
     setEditingId(project.id);
-    setForm({ title: project.title, tech: project.tech, desc: project.description });
-    setOldImageUrl(project.image_url);
+    setForm({ 
+      title: project.title, 
+      tech: project.tech, 
+      desc: project.description 
+    });
+    setOldImageUrl(project.image_url); 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -81,41 +93,85 @@ const ProjectsManager = () => {
     setOldImageUrl("");
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUploading(true);
+    
     try {
+      
       let publicUrl = oldImageUrl; 
+
+   
       if (imageFile) {
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage.from('project-images').upload(fileName, imageFile);
+        
+        const { error: uploadError } = await supabase.storage
+          .from('project-images')
+          .upload(fileName, imageFile);
+        
         if (uploadError) throw uploadError;
-        const { data } = supabase.storage.from('project-images').getPublicUrl(fileName);
+
+        const { data } = supabase.storage
+          .from('project-images')
+          .getPublicUrl(fileName);
+          
         publicUrl = data.publicUrl;
-      } else if (!editingId && !imageFile) {
+      } 
+    
+      else if (!editingId && !imageFile) {
         alert("Please select an image!");
-        setUploading(false); return;
+        setUploading(false); 
+        return;
       }
 
-      const projectData = { title: form.title, tech: form.tech, description: form.desc, image_url: publicUrl };
+     
+      const projectData = { 
+        title: form.title, 
+        tech: form.tech, 
+        description: form.desc, 
+        image_url: publicUrl 
+      };
 
+      
       if (editingId) {
-        await supabase.from('projects').update(projectData).eq('id', editingId);
-        alert("Updated!");
+        console.log("Updating Project ID:", editingId);
+        
+        const { error } = await supabase
+          .from('projects')
+          .update(projectData)
+          .eq('id', editingId); 
+
+        if (error) throw error;
+        alert("Project Updated Successfully!");
       } else {
-        await supabase.from('projects').insert(projectData);
-        alert("Added!");
+     
+        const { error } = await supabase
+          .from('projects')
+          .insert(projectData);
+
+        if (error) throw error;
+        alert("Project Added Successfully!");
       }
-      handleCancelEdit(); fetchProjects();
-    } catch (err) { alert(err.message); } 
-    finally { setUploading(false); }
+
+   
+      handleCancelEdit(); 
+      await fetchProjects(); 
+
+    } catch (err) { 
+      console.error("Database Error:", err);
+      alert("Error: " + err.message); 
+    } finally { 
+      setUploading(false); 
+    }
   };
 
   const handleDelete = async (id) => {
     if(window.confirm("Delete this project?")) {
-      await supabase.from('projects').delete().eq('id', id);
-      fetchProjects();
+      const { error } = await supabase.from('projects').delete().eq('id', id);
+      if (error) alert("Error deleting: " + error.message);
+      else fetchProjects();
     }
   };
 
@@ -126,14 +182,40 @@ const ProjectsManager = () => {
           <h4 style={{margin: 0}}>{editingId ? "Edit Project" : "Add New Project"}</h4>
           {editingId && <button onClick={handleCancelEdit} style={styles.cancelBtn}>Cancel</button>}
         </div>
+        
         <form onSubmit={handleSubmit} style={styles.form}>
-          <input placeholder="Project Title" value={form.title} onChange={e => setForm({...form, title: e.target.value})} style={styles.input} />
-          <input placeholder="Tech Stack (e.g. React, Supabase)" value={form.tech} onChange={e => setForm({...form, tech: e.target.value})} style={styles.input} />
-          <textarea placeholder="Description" value={form.desc} onChange={e => setForm({...form, desc: e.target.value})} rows="3" style={styles.input} />
+          <input 
+            placeholder="Project Title" 
+            value={form.title} 
+            onChange={e => setForm({...form, title: e.target.value})} 
+            style={styles.input} 
+          />
+          <input 
+            placeholder="Tech Stack (e.g. React, Supabase)" 
+            value={form.tech} 
+            onChange={e => setForm({...form, tech: e.target.value})} 
+            style={styles.input} 
+          />
+          <textarea 
+            placeholder="Description" 
+            value={form.desc} 
+            onChange={e => setForm({...form, desc: e.target.value})} 
+            rows="3" 
+            style={styles.input} 
+          />
+          
           <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
-             <label style={{fontSize: "0.9rem", color: "#ccc"}}>{editingId ? "Change Media" : "Project Media"}</label>
-             <input type="file" accept="image/*, .glb, .gltf" onChange={e => setImageFile(e.target.files[0])} style={styles.fileInput} />
+             <label style={{fontSize: "0.9rem", color: "#ccc"}}>
+               {editingId ? "Change Media (Leave empty to keep current)" : "Project Media"}
+             </label>
+             <input 
+               type="file" 
+               accept="image/*, .glb, .gltf" 
+               onChange={e => setImageFile(e.target.files[0])} 
+               style={styles.fileInput} 
+             />
           </div>
+          
           <button type="submit" disabled={uploading} style={editingId ? styles.updateBtn : styles.primaryBtn}>
             {uploading ? "Processing..." : (editingId ? "Update Project" : "Add Project")}
           </button>

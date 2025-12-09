@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Projects.css";
 import CircularGallery from "../CircularGallery/CircularGallery";
-import { supabase } from "../supabaseClient"; // Import Supabase client
+import { supabase } from "../supabaseClient"; 
 
 const Projects = () => {
   const [galleryItems, setGalleryItems] = useState([]);
@@ -26,7 +26,7 @@ const Projects = () => {
           title: p.title,
           tech: p.tech,
           description: p.description,
-          // This will now contain the link to the uploaded .jpg/.png
+
           image: p.image_url 
         }));
 
