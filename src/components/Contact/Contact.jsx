@@ -1,4 +1,5 @@
 import "./Contact.css";
+
 import { Link } from "react-router-dom"; 
 import { FaEnvelope, FaLinkedin, FaGithub } from "react-icons/fa";
 
@@ -6,9 +7,13 @@ const contacts = [
   {
     icon: <FaEnvelope className="contact-icon" />,
     title: "Email",
+ 
     link: "/contact", 
+
     label: "Send me a message", 
     isInternal: true, 
+  },
+  {
     icon: <FaLinkedin className="contact-icon" />,
     title: "LinkedIn",
     link: "https://www.linkedin.com/in/roxanne-roxas-758977382/",
@@ -30,7 +35,7 @@ const ContactCard = ({ icon, title, link, label, isInternal }) => {
       {icon}
       <h3>{title}</h3>
       <p>
-        
+ 
         {isInternal ? (
           <Link to={link} className="contact-link">
             {label}
