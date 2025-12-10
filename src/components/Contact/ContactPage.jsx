@@ -133,8 +133,8 @@ const ContactPage = () => {
               {loading ? "Sending..." : "Send Message"}
             </button>
 
-            {status === "success" && <div className="status-msg success">✅ Message sent successfully!</div>}
-            {status === "error" && <div className="status-msg error">❌ Failed to send. Please try again.</div>}
+            {status === "success" && <div className="status-msg success">Message sent successfully!</div>}
+            {status === "error" && <div className="status-msg error">Failed to send. Please try again.</div>}
 
           </form>
         </div>
