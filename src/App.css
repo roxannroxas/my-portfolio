@@ -5,16 +5,16 @@
   --text: #fff;
 }
 
-/* 1. Keep main containers transparent */
+
 html, body, #root, .app-container {
   background-color: transparent !important;
   background-image: none !important;
-  min-height: 100vh; /* Use min-height instead of height */
+  min-height: 100vh; 
   margin: 0;
 }
 
 .app-container {
-  /* Allow scrolling */
+ 
   overflow-y: auto; 
   height: 100vh;
 }
@@ -23,7 +23,6 @@ html, body, #root, .app-container {
   display: none;
 }
 
-/* 2. THE FIX IS HERE */
 section {
   width: 100%;
   min-height: 100vh;
@@ -34,8 +33,7 @@ section {
   padding: 60px 40px;
   box-sizing: border-box;
   
-  /* CHANGE THIS: Make section background transparent */
-  /* OLD: background: var(--bg); */
+
   background: transparent; 
   
   color: var(--text);

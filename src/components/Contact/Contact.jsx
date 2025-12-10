@@ -5,8 +5,8 @@ const contacts = [
   {
     icon: <FaEnvelope className="contact-icon" />,
     title: "Email",
-    link: "mailto:roxanneroxas23@gmail.com",
-    label: "roxanneroxas23@gmail.com",
+    link: "mailto:roxanne.roxas@email.lcup.edu.ph",
+    label: "roxanne.roxas@email.lcup.edu.ph",
   },
   {
     icon: <FaLinkedin className="contact-icon" />,

@@ -23,7 +23,6 @@ import "./App.css";
 function App() {
     const location = useLocation();
   
-  // Check if the current URL starts with "/admin"
   const isAdmin = location.pathname.startsWith("/admin");
   return (
     <div className="app-container">
@@ -98,7 +97,6 @@ function App() {
       </Routes>
 
 
-      {/* Only show these on public pages, HIDE them on Admin Dashboard */}
       {!isAdmin && (
         <>
           <API />
