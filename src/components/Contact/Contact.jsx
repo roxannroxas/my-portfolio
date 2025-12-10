@@ -22,17 +22,25 @@ const contacts = [
   },
 ];
 
-const ContactCard = ({ icon, title, link, label }) => (
-  <div className="contact-card">
-    {icon}
-    <h3>{title}</h3>
-    <p>
-      <a href={link} target="_blank" rel="noreferrer">
-        {label}
-      </a>
-    </p>
-  </div>
-);
+const ContactCard = ({ icon, title, link, label }) => {
+  const isEmail = link.startsWith("mailto:");
+
+  return (
+    <div className="contact-card">
+      {icon}
+      <h3>{title}</h3>
+      <p>
+        <a 
+          href={link} 
+          target={isEmail ? "_self" : "_blank"} 
+          rel="noreferrer"
+        >
+          {label}
+        </a>
+      </p>
+    </div>
+  );
+};
 
 function Contact() {
   return (
